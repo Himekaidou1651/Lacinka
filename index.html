@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lacinka</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="window">
+    <header class="titlebar">
+      <div class="brand" data-drag="true">
+        <div class="brand-mark">L</div>
+        <div class="brand-text">
+          <div class="brand-title">Lacinka</div>
+          <div class="brand-subtitle">Electron 骨架</div>
+        </div>
+      </div>
+      <div class="window-actions">
+        <button id="btn-minimize" class="icon-button" type="button" aria-label="最小化">_</button>
+        <button id="btn-close" class="icon-button danger" type="button" aria-label="关闭">×</button>
+      </div>
+    </header>
+
+    <main class="shell">
+      <section class="hero">
+        <h1>样式的丰富</h1>
+        <p>这是 M1 的最小可运行承载层，用来确认 Electron 窗口、标题栏和基础样式能够先站起来。</p>
+      </section>
+
+      <section class="panel-grid">
+        <article class="panel">
+          <h2>状态</h2>
+          <p>窗口已由 Electron 接管，后续会在这里接回转写逻辑。</p>
+        </article>
+        <article class="panel">
+          <h2>下一步</h2>
+          <p>把现有 `app.js` 的文案、样式变量和行为层迁到渲染进程。</p>
+        </article>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>2026</span>
+      <span id="year"></span>
+    </footer>
+  </div>
+
+  <script src="./renderer.js"></script>
+</body>
+</html>
