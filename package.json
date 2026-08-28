@@ -6,8 +6,39 @@
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
     "build:transform": "build-transform-cli.bat",
+    "predist": "npm run build:transform",
     "start": "node electron-start.js",
     "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "dev.lacinka.app",
+    "productName": "Lacinka",
+    "asar": true,
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer.js",
+      "index.html",
+      "style.css",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "transform_cli.exe",
+        "to": "transform_cli.exe"
+      }
+    ],
+    "win": {
+      "icon": "assets/icons/lacinka.ico",
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    }
   },
   "devDependencies": {
     "electron": "^38.8.6",

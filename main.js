@@ -69,7 +69,9 @@ ipcMain.handle("transform", async (_event, input, mode) => {
 
 function runTransform(input, mode) {
   const exeName = process.platform === "win32" ? "transform_cli.exe" : "transform_cli";
-  const exePath = path.join(__dirname, exeName);
+  const exePath = app.isPackaged
+    ? path.join(process.resourcesPath, exeName)
+    : path.join(__dirname, exeName);
 
   return new Promise((resolve, reject) => {
     const child = spawn(exePath, [mode], {
