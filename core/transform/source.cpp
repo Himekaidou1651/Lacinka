@@ -1,0 +1,15 @@
+#include "source.h"
+
+transforml::transforml(std::string input){
+    this->input = input;
+    this->output = "";
+    this->type = transformType::default;
+}
+
+void transforml::outputl(){
+    std::cout << this->input;
+}
+
+size_t transforml::getLen(){
+    return this->input.length();
+}
