@@ -3,7 +3,6 @@
 #include <shellapi.h>
 #include <string>
 #include <vector>
-#include <ctime>
 #include "../core/transform/hellas.h"
 #include "../core/transform/jugoslav.h"
 
@@ -40,7 +39,6 @@ static HWND gLastRun = nullptr;
 static HWND gHellas = nullptr;
 static HWND gJugoslav = nullptr;
 
-static std::wstring gOutputCache;
 static COLORREF gStatusColor = RGB(47, 133, 90);
 
 static std::string wideToUtf8(const std::wstring& w) {
@@ -70,16 +68,16 @@ static void setText(HWND h, const std::wstring& text) {
     SetWindowTextW(h, text.c_str());
 }
 
-static int countChars(const std::wstring& text) {
-    return (int)text.size();
-}
-
 static std::wstring nowText() {
     SYSTEMTIME st;
     GetLocalTime(&st);
     wchar_t buf[32];
     swprintf(buf, 32, L"%02u:%02u:%02u", st.wHour, st.wMinute, st.wSecond);
     return buf;
+}
+
+static int countChars(const std::wstring& text) {
+    return (int)text.size();
 }
 
 static void setStatus(const std::wstring& text, const std::wstring& pill, COLORREF color, const std::wstring& error = L"") {
@@ -105,15 +103,14 @@ static void setMode(int mode) {
 }
 
 static void applyOutput(const std::string& out) {
-    gOutputCache = utf8ToWide(out);
-    setText(gOutput, gOutputCache);
+    setText(gOutput, utf8ToWide(out));
     updateCounts();
 }
 
 static void runTransform() {
     SetWindowTextW(gRunBtn, L"处理中...");
     EnableWindow(gRunBtn, FALSE);
-    setStatus(L"处理中...", L"工作中", RGB(183, 121, 31));
+    setStatus(L"正在转写", L"工作中", RGB(180, 120, 25));
 
     std::string input = wideToUtf8(getText(gInput));
     std::string output;
@@ -129,19 +126,17 @@ static void runTransform() {
 
     applyOutput(output);
     setStatus(L"转写完成", L"就绪", RGB(47, 133, 90));
-    setText(gLastRun, L"上次运行：" + nowText());
+    setText(gLastRun, L"上次运行: " + nowText());
     SetWindowTextW(gRunBtn, L"转写");
     EnableWindow(gRunBtn, TRUE);
 }
 
 static void clearAll() {
-    SetWindowTextW(gInput, L"");
-    SetWindowTextW(gOutput, L"");
+    setText(gInput, L"");
+    setText(gOutput, L"");
     setText(gError, L"");
-    setText(gStatus, L"等待输入");
-    setText(gStatusPill, L"就绪");
-    gStatusColor = RGB(47, 133, 90);
-    setText(gLastRun, L"上次运行：-");
+    setStatus(L"等待输入", L"就绪", RGB(47, 133, 90));
+    setText(gLastRun, L"上次运行: --");
     updateCounts();
 }
 
@@ -155,10 +150,10 @@ static void swapText() {
 
 static void fillSample(bool hellas) {
     if (hellas) {
-        setText(gInput, L"Αυτή είναι μια δοκιμή.");
+        setText(gInput, L"螒蠀蟿萎 蔚委谓伪喂 渭喂伪 未慰魏萎.");
         setMode(0);
     } else {
-        setText(gInput, L"Љубав, њега, џем.");
+        setText(gInput, L"袎褍斜邪胁, 褮械谐邪, 褵械屑.");
         setMode(1);
     }
     updateCounts();
@@ -180,12 +175,11 @@ static void copyOutput() {
     setStatus(L"已复制输出", L"就绪", RGB(47, 133, 90));
 }
 
-static void downloadOutput(bool asJson) {
+static void downloadOutput() {
     std::wstring text = getText(gOutput);
-    std::wstring path = asJson ? L"Lacinka_output.json" : L"Lacinka_output.txt";
-    HANDLE file = CreateFileW(path.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+    HANDLE file = CreateFileW(L"Lacinka_output.txt", GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
     if (file == INVALID_HANDLE_VALUE) return;
-    std::string data = asJson ? ("{\"output\":\"" + wideToUtf8(text) + "\"}") : wideToUtf8(text);
+    std::string data = wideToUtf8(text);
     DWORD written = 0;
     WriteFile(file, data.c_str(), (DWORD)data.size(), &written, nullptr);
     CloseHandle(file);
@@ -218,36 +212,40 @@ static void layout(HWND hwnd) {
     int w = rc.right - rc.left;
     int h = rc.bottom - rc.top;
     int pad = 16;
-    int headerH = 66;
+    int headerH = 68;
     int footerH = 44;
     int top = pad + headerH;
     int contentH = h - top - footerH - pad;
 
-    if (w >= 1280) {
-        int ctrlW = 230;
+    if (w >= 1200) {
+        int ctrlW = 240;
         int leftW = (w - pad * 4 - ctrlW) / 2;
         int rightW = w - pad * 4 - ctrlW - leftW;
+
         MoveWindow(gInput, pad, top, leftW, contentH, TRUE);
-        MoveWindow(gStatus, 180, 16, 260, 24, TRUE);
-        MoveWindow(gStatusPill, 452, 14, 84, 28, TRUE);
+        MoveWindow(gStatus, 160, 16, 260, 24, TRUE);
+        MoveWindow(gStatusPill, 430, 14, 84, 28, TRUE);
+        MoveWindow(gLastRun, w - 240, 18, 220, 22, TRUE);
+
         MoveWindow(gHellas, pad * 2 + leftW, top, ctrlW, 36, TRUE);
         MoveWindow(gJugoslav, pad * 2 + leftW, top + 42, ctrlW, 36, TRUE);
         MoveWindow(gRunBtn, pad * 2 + leftW, top + 94, ctrlW, 46, TRUE);
         MoveWindow(GetDlgItem(hwnd, IDC_SWAP), pad * 2 + leftW, top + 152, ctrlW, 32, TRUE);
         MoveWindow(GetDlgItem(hwnd, IDC_COPY), pad * 2 + leftW, top + 198, ctrlW / 2 - 6, 30, TRUE);
         MoveWindow(GetDlgItem(hwnd, IDC_DOWNLOAD), pad * 2 + leftW + ctrlW / 2 + 6, top + 198, ctrlW / 2 - 6, 30, TRUE);
+
         MoveWindow(gOutput, pad * 3 + leftW + ctrlW, top, rightW, contentH, TRUE);
         MoveWindow(GetDlgItem(hwnd, IDC_SAMPLE_HELLAS), pad, top + contentH - 34, 92, 26, TRUE);
-        MoveWindow(GetDlgItem(hwnd, IDC_SAMPLE_JUGOSLAV), pad + 100, top + contentH - 34, 92, 26, TRUE);
+        MoveWindow(GetDlgItem(hwnd, IDC_SAMPLE_JUGOSLAV), pad + 100, top + contentH - 34, 110, 26, TRUE);
         MoveWindow(gInputCount, pad + leftW - 90, top + contentH - 34, 80, 24, TRUE);
         MoveWindow(gOutputCount, pad * 3 + leftW + ctrlW + rightW - 90, top + contentH - 34, 80, 24, TRUE);
-        MoveWindow(gLastRun, w - 220, 18, 200, 22, TRUE);
         MoveWindow(gError, pad, h - footerH - 30, w - 32, 18, TRUE);
     } else {
         int columnW = w - pad * 2;
         int inputH = 190;
         int ctrlH = 170;
         int outputH = h - top - footerH - pad - inputH - ctrlH - 20;
+
         MoveWindow(gInput, pad, top, columnW, inputH, TRUE);
         MoveWindow(gHellas, pad, top + inputH + 10, columnW / 2 - 4, 32, TRUE);
         MoveWindow(gJugoslav, pad + columnW / 2 + 4, top + inputH + 10, columnW / 2 - 4, 32, TRUE);
@@ -257,12 +255,12 @@ static void layout(HWND hwnd) {
         MoveWindow(GetDlgItem(hwnd, IDC_DOWNLOAD), pad + columnW / 2 + 4, top + inputH + 134, columnW / 2 - 4, 28, TRUE);
         MoveWindow(gOutput, pad, top + inputH + ctrlH, columnW, outputH, TRUE);
         MoveWindow(GetDlgItem(hwnd, IDC_SAMPLE_HELLAS), pad, top + inputH - 34, 92, 26, TRUE);
-        MoveWindow(GetDlgItem(hwnd, IDC_SAMPLE_JUGOSLAV), pad + 100, top + inputH - 34, 92, 26, TRUE);
+        MoveWindow(GetDlgItem(hwnd, IDC_SAMPLE_JUGOSLAV), pad + 100, top + inputH - 34, 110, 26, TRUE);
         MoveWindow(gInputCount, w - 110, top + inputH - 34, 80, 24, TRUE);
         MoveWindow(gOutputCount, w - 110, top + inputH + ctrlH + outputH - 34, 80, 24, TRUE);
-        MoveWindow(gStatus, 170, 16, 220, 24, TRUE);
-        MoveWindow(gStatusPill, 400, 14, 84, 28, TRUE);
-        MoveWindow(gLastRun, 500, 18, 200, 22, TRUE);
+        MoveWindow(gStatus, 160, 16, 220, 24, TRUE);
+        MoveWindow(gStatusPill, 390, 14, 84, 28, TRUE);
+        MoveWindow(gLastRun, 490, 18, 220, 22, TRUE);
         MoveWindow(gError, pad, h - footerH - 30, w - 32, 18, TRUE);
     }
 }
@@ -271,10 +269,11 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
     switch (msg) {
     case WM_CREATE: {
         HFONT font = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
-        CreateWindowW(L"STATIC", L"转写工具", WS_CHILD | WS_VISIBLE, 16, 14, 120, 24, hwnd, nullptr, nullptr, nullptr);
+
+        CreateWindowW(L"STATIC", L"Lacinka 转写工具", WS_CHILD | WS_VISIBLE, 16, 14, 140, 24, hwnd, nullptr, nullptr, nullptr);
         gStatus = CreateWindowW(L"STATIC", L"等待输入", WS_CHILD | WS_VISIBLE, 140, 14, 220, 24, hwnd, (HMENU)IDC_STATUS, nullptr, nullptr);
         gStatusPill = CreateWindowW(L"STATIC", L"就绪", WS_CHILD | WS_VISIBLE, 0, 0, 80, 26, hwnd, (HMENU)IDC_STATUS_PILL, nullptr, nullptr);
-        gLastRun = CreateWindowW(L"STATIC", L"上次运行：-", WS_CHILD | WS_VISIBLE, 0, 0, 160, 24, hwnd, (HMENU)IDC_LAST_RUN, nullptr, nullptr);
+        gLastRun = CreateWindowW(L"STATIC", L"上次运行: --", WS_CHILD | WS_VISIBLE, 0, 0, 200, 24, hwnd, (HMENU)IDC_LAST_RUN, nullptr, nullptr);
 
         gInput = CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT", L"",
                                  WS_CHILD | WS_VISIBLE | ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL | WS_VSCROLL,
@@ -300,10 +299,12 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         gOutputCount = CreateWindowW(L"STATIC", L"0 字符", WS_CHILD | WS_VISIBLE, 0, 0, 80, 20, hwnd, (HMENU)IDC_OUTPUT_COUNT, nullptr, nullptr);
         gError = CreateWindowW(L"STATIC", L"", WS_CHILD | WS_VISIBLE, 16, 0, 100, 20, hwnd, (HMENU)IDC_ERROR, nullptr, nullptr);
 
-        HWND kids[] = {gStatus, gStatusPill, gLastRun, gInput, gOutput, gHellas, gJugoslav, gRunBtn,
-                       GetDlgItem(hwnd, IDC_CLEAR), GetDlgItem(hwnd, IDC_SWAP), GetDlgItem(hwnd, IDC_COPY),
-                       GetDlgItem(hwnd, IDC_DOWNLOAD), GetDlgItem(hwnd, IDC_SAMPLE_HELLAS), GetDlgItem(hwnd, IDC_SAMPLE_JUGOSLAV),
-                       gInputCount, gOutputCount, gError};
+        HWND kids[] = {
+            gStatus, gStatusPill, gLastRun, gInput, gOutput, gHellas, gJugoslav, gRunBtn,
+            GetDlgItem(hwnd, IDC_CLEAR), GetDlgItem(hwnd, IDC_SWAP), GetDlgItem(hwnd, IDC_COPY),
+            GetDlgItem(hwnd, IDC_DOWNLOAD), GetDlgItem(hwnd, IDC_SAMPLE_HELLAS), GetDlgItem(hwnd, IDC_SAMPLE_JUGOSLAV),
+            gInputCount, gOutputCount, gError
+        };
         for (HWND h : kids) {
             SendMessageW(h, WM_SETFONT, (WPARAM)font, TRUE);
         }
@@ -338,7 +339,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
             copyOutput();
             return 0;
         case IDC_DOWNLOAD:
-            downloadOutput(false);
+            downloadOutput();
             return 0;
         case IDC_SAMPLE_HELLAS:
             fillSample(true);
@@ -362,7 +363,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 }
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
-    INITCOMMONCONTROLSEX icc{sizeof(icc), ICC_STANDARD_CLASSES};
+    INITCOMMONCONTROLSEX icc{ sizeof(icc), ICC_STANDARD_CLASSES };
     InitCommonControlsEx(&icc);
 
     const wchar_t CLASS_NAME[] = L"LacinkaWindow";
