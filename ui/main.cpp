@@ -3,8 +3,8 @@
 #include <shellapi.h>
 #include <string>
 #include <vector>
-#include "../core/transform/hellas.h"
-#include "../core/transform/jugoslav.h"
+
+#include "js_runtime.h"
 
 #pragma comment(lib, "Comctl32.lib")
 #pragma comment(lib, "Shell32.lib")
@@ -38,6 +38,7 @@ static HWND gOutputCount = nullptr;
 static HWND gLastRun = nullptr;
 static HWND gHellas = nullptr;
 static HWND gJugoslav = nullptr;
+static JsRuntime gJs;
 
 static COLORREF gStatusColor = RGB(47, 133, 90);
 
@@ -76,10 +77,6 @@ static std::wstring nowText() {
     return buf;
 }
 
-static int countChars(const std::wstring& text) {
-    return (int)text.size();
-}
-
 static void setStatus(const std::wstring& text, const std::wstring& pill, COLORREF color, const std::wstring& error = L"") {
     setText(gStatus, text);
     setText(gStatusPill, pill);
@@ -89,8 +86,8 @@ static void setStatus(const std::wstring& text, const std::wstring& pill, COLORR
 }
 
 static void updateCounts() {
-    setText(gInputCount, std::to_wstring(countChars(getText(gInput))) + L" 字符");
-    setText(gOutputCount, std::to_wstring(countChars(getText(gOutput))) + L" 字符");
+    setText(gInputCount, std::to_wstring((int)getText(gInput).size()) + gJs.text(L"charactersSuffix", L" 字符"));
+    setText(gOutputCount, std::to_wstring((int)getText(gOutput).size()) + gJs.text(L"charactersSuffix", L" 字符"));
 }
 
 static int currentMode() {
@@ -108,26 +105,16 @@ static void applyOutput(const std::string& out) {
 }
 
 static void runTransform() {
-    SetWindowTextW(gRunBtn, L"处理中...");
+    SetWindowTextW(gRunBtn, gJs.text(L"processingButton", L"处理...").c_str());
     EnableWindow(gRunBtn, FALSE);
-    setStatus(L"正在转写", L"工作中", RGB(180, 120, 25));
+    setStatus(gJs.text(L"statusProcessing", L"正在转写"), gJs.text(L"pillWorking", L"工作中"), RGB(180, 120, 25));
 
     std::string input = wideToUtf8(getText(gInput));
-    std::string output;
-    if (currentMode() == 0) {
-        hellasLatin t(input);
-        t.transform();
-        output = t.getOutput();
-    } else {
-        serbiaLatin t(input);
-        t.transform();
-        output = t.getOutput();
-    }
+    applyOutput(gJs.transform(input, currentMode()));
 
-    applyOutput(output);
-    setStatus(L"转写完成", L"就绪", RGB(47, 133, 90));
-    setText(gLastRun, L"上次运行: " + nowText());
-    SetWindowTextW(gRunBtn, L"转写");
+    setStatus(gJs.text(L"statusDone", L"转写完成"), gJs.text(L"pillReady", L"就绪"), RGB(47, 133, 90));
+    setText(gLastRun, gJs.text(L"lastRunPrefix", L"上次运行: ") + nowText());
+    SetWindowTextW(gRunBtn, gJs.text(L"runButton", L"转写").c_str());
     EnableWindow(gRunBtn, TRUE);
 }
 
@@ -135,8 +122,8 @@ static void clearAll() {
     setText(gInput, L"");
     setText(gOutput, L"");
     setText(gError, L"");
-    setStatus(L"等待输入", L"就绪", RGB(47, 133, 90));
-    setText(gLastRun, L"上次运行: --");
+    setStatus(gJs.text(L"statusWaiting", L"等待输入"), gJs.text(L"pillReady", L"就绪"), RGB(47, 133, 90));
+    setText(gLastRun, gJs.text(L"lastRunPrefix", L"上次运行: ") + gJs.text(L"neverRun", L"--"));
     updateCounts();
 }
 
@@ -149,13 +136,9 @@ static void swapText() {
 }
 
 static void fillSample(bool hellas) {
-    if (hellas) {
-        setText(gInput, L"螒蠀蟿萎 蔚委谓伪喂 渭喂伪 未慰魏萎.");
-        setMode(0);
-    } else {
-        setText(gInput, L"袎褍斜邪胁, 褮械谐邪, 褵械屑.");
-        setMode(1);
-    }
+    int mode = hellas ? 0 : 1;
+    setText(gInput, gJs.sample(mode, L""));
+    setMode(mode);
     updateCounts();
 }
 
@@ -172,7 +155,7 @@ static void copyOutput() {
         SetClipboardData(CF_UNICODETEXT, mem);
     }
     CloseClipboard();
-    setStatus(L"已复制输出", L"就绪", RGB(47, 133, 90));
+    setStatus(gJs.text(L"statusCopied", L"已复制输出"), gJs.text(L"pillReady", L"就绪"), RGB(47, 133, 90));
 }
 
 static void downloadOutput() {
@@ -183,7 +166,7 @@ static void downloadOutput() {
     DWORD written = 0;
     WriteFile(file, data.c_str(), (DWORD)data.size(), &written, nullptr);
     CloseHandle(file);
-    setStatus(L"已下载输出", L"就绪", RGB(47, 133, 90));
+    setStatus(gJs.text(L"statusDownloaded", L"已下载输出"), gJs.text(L"pillReady", L"就绪"), RGB(47, 133, 90));
 }
 
 static LRESULT CALLBACK StatusPillProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam, UINT_PTR, DWORD_PTR) {
@@ -212,13 +195,13 @@ static void layout(HWND hwnd) {
     int w = rc.right - rc.left;
     int h = rc.bottom - rc.top;
     int pad = 16;
-    int headerH = 68;
-    int footerH = 44;
+    int headerH = gJs.number(L"headerHeight", 68);
+    int footerH = gJs.number(L"footerHeight", 44);
     int top = pad + headerH;
     int contentH = h - top - footerH - pad;
 
-    if (w >= 1200) {
-        int ctrlW = 240;
+    if (w >= gJs.number(L"desktopBreakpoint", 1200)) {
+        int ctrlW = gJs.number(L"controlWidth", 240);
         int leftW = (w - pad * 4 - ctrlW) / 2;
         int rightW = w - pad * 4 - ctrlW - leftW;
 
@@ -269,34 +252,30 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
     switch (msg) {
     case WM_CREATE: {
         HFONT font = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
+        std::wstring appTitle = gJs.text(L"appTitle", L"Lacinka \u8f6c\u5199\u5de5\u5177");
+        SetWindowTextW(hwnd, gJs.text(L"windowTitle", L"Lacinka").c_str());
 
-        CreateWindowW(L"STATIC", L"Lacinka 转写工具", WS_CHILD | WS_VISIBLE, 16, 14, 140, 24, hwnd, nullptr, nullptr, nullptr);
-        gStatus = CreateWindowW(L"STATIC", L"等待输入", WS_CHILD | WS_VISIBLE, 140, 14, 220, 24, hwnd, (HMENU)IDC_STATUS, nullptr, nullptr);
-        gStatusPill = CreateWindowW(L"STATIC", L"就绪", WS_CHILD | WS_VISIBLE, 0, 0, 80, 26, hwnd, (HMENU)IDC_STATUS_PILL, nullptr, nullptr);
-        gLastRun = CreateWindowW(L"STATIC", L"上次运行: --", WS_CHILD | WS_VISIBLE, 0, 0, 200, 24, hwnd, (HMENU)IDC_LAST_RUN, nullptr, nullptr);
+        CreateWindowW(L"STATIC", appTitle.c_str(), WS_CHILD | WS_VISIBLE, 16, 14, 160, 24, hwnd, nullptr, nullptr, nullptr);
+        gStatus = CreateWindowW(L"STATIC", gJs.text(L"statusWaiting", L"\u7b49\u5f85\u8f93\u5165").c_str(), WS_CHILD | WS_VISIBLE, 140, 14, 220, 24, hwnd, (HMENU)IDC_STATUS, nullptr, nullptr);
+        gStatusPill = CreateWindowW(L"STATIC", gJs.text(L"pillReady", L"\u5c31\u7eea").c_str(), WS_CHILD | WS_VISIBLE, 0, 0, 80, 26, hwnd, (HMENU)IDC_STATUS_PILL, nullptr, nullptr);
+        gLastRun = CreateWindowW(L"STATIC", (gJs.text(L"lastRunPrefix", L"\u4e0a\u6b21\u8fd0\u884c: ") + gJs.text(L"neverRun", L"--")).c_str(), WS_CHILD | WS_VISIBLE, 0, 0, 200, 24, hwnd, (HMENU)IDC_LAST_RUN, nullptr, nullptr);
 
-        gInput = CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT", L"",
-                                 WS_CHILD | WS_VISIBLE | ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL | WS_VSCROLL,
-                                 0, 0, 0, 0, hwnd, (HMENU)IDC_INPUT, nullptr, nullptr);
-        gOutput = CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT", L"",
-                                  WS_CHILD | WS_VISIBLE | ES_LEFT | ES_MULTILINE | ES_READONLY | ES_AUTOVSCROLL | WS_VSCROLL,
-                                  0, 0, 0, 0, hwnd, (HMENU)IDC_OUTPUT, nullptr, nullptr);
+        gInput = CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT", L"", WS_CHILD | WS_VISIBLE | ES_LEFT | ES_MULTILINE | ES_AUTOVSCROLL | WS_VSCROLL, 0, 0, 0, 0, hwnd, (HMENU)IDC_INPUT, nullptr, nullptr);
+        gOutput = CreateWindowExW(WS_EX_CLIENTEDGE, L"EDIT", L"", WS_CHILD | WS_VISIBLE | ES_LEFT | ES_MULTILINE | ES_READONLY | ES_AUTOVSCROLL | WS_VSCROLL, 0, 0, 0, 0, hwnd, (HMENU)IDC_OUTPUT, nullptr, nullptr);
 
-        gHellas = CreateWindowW(L"BUTTON", L"Hellas", WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON | WS_GROUP,
-                                0, 0, 0, 0, hwnd, (HMENU)IDC_MODE_HELLAS, nullptr, nullptr);
-        gJugoslav = CreateWindowW(L"BUTTON", L"Jugoslav", WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON,
-                                  0, 0, 0, 0, hwnd, (HMENU)IDC_MODE_JUGOSLAV, nullptr, nullptr);
+        gHellas = CreateWindowW(L"BUTTON", gJs.modeLabel(0, L"Hellas").c_str(), WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON | WS_GROUP, 0, 0, 0, 0, hwnd, (HMENU)IDC_MODE_HELLAS, nullptr, nullptr);
+        gJugoslav = CreateWindowW(L"BUTTON", gJs.modeLabel(1, L"Jugoslav").c_str(), WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON, 0, 0, 0, 0, hwnd, (HMENU)IDC_MODE_JUGOSLAV, nullptr, nullptr);
         SendMessageW(gHellas, BM_SETCHECK, BST_CHECKED, 0);
 
-        gRunBtn = CreateWindowW(L"BUTTON", L"转写", WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, hwnd, (HMENU)IDC_RUN, nullptr, nullptr);
-        CreateWindowW(L"BUTTON", L"清空", WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, hwnd, (HMENU)IDC_CLEAR, nullptr, nullptr);
-        CreateWindowW(L"BUTTON", L"交换", WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, hwnd, (HMENU)IDC_SWAP, nullptr, nullptr);
-        CreateWindowW(L"BUTTON", L"复制", WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, hwnd, (HMENU)IDC_COPY, nullptr, nullptr);
-        CreateWindowW(L"BUTTON", L"下载TXT", WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, hwnd, (HMENU)IDC_DOWNLOAD, nullptr, nullptr);
-        CreateWindowW(L"BUTTON", L"希腊示例", WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, hwnd, (HMENU)IDC_SAMPLE_HELLAS, nullptr, nullptr);
-        CreateWindowW(L"BUTTON", L"塞尔维亚示例", WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, hwnd, (HMENU)IDC_SAMPLE_JUGOSLAV, nullptr, nullptr);
-        gInputCount = CreateWindowW(L"STATIC", L"0 字符", WS_CHILD | WS_VISIBLE, 0, 0, 80, 20, hwnd, (HMENU)IDC_INPUT_COUNT, nullptr, nullptr);
-        gOutputCount = CreateWindowW(L"STATIC", L"0 字符", WS_CHILD | WS_VISIBLE, 0, 0, 80, 20, hwnd, (HMENU)IDC_OUTPUT_COUNT, nullptr, nullptr);
+        gRunBtn = CreateWindowW(L"BUTTON", gJs.text(L"runButton", L"\u8f6c\u5199").c_str(), WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, hwnd, (HMENU)IDC_RUN, nullptr, nullptr);
+        CreateWindowW(L"BUTTON", gJs.text(L"clearButton", L"\u6e05\u7a7a").c_str(), WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, hwnd, (HMENU)IDC_CLEAR, nullptr, nullptr);
+        CreateWindowW(L"BUTTON", gJs.text(L"swapButton", L"\u4ea4\u6362").c_str(), WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, hwnd, (HMENU)IDC_SWAP, nullptr, nullptr);
+        CreateWindowW(L"BUTTON", gJs.text(L"copyButton", L"\u590d\u5236").c_str(), WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, hwnd, (HMENU)IDC_COPY, nullptr, nullptr);
+        CreateWindowW(L"BUTTON", gJs.text(L"downloadButton", L"\u4e0b\u8f7dTXT").c_str(), WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, hwnd, (HMENU)IDC_DOWNLOAD, nullptr, nullptr);
+        CreateWindowW(L"BUTTON", gJs.text(L"hellasSampleButton", L"\u5e0c\u814a\u793a\u4f8b").c_str(), WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, hwnd, (HMENU)IDC_SAMPLE_HELLAS, nullptr, nullptr);
+        CreateWindowW(L"BUTTON", gJs.text(L"jugoslavSampleButton", L"\u585e\u5c14\u7ef4\u4e9a\u793a\u4f8b").c_str(), WS_CHILD | WS_VISIBLE, 0, 0, 0, 0, hwnd, (HMENU)IDC_SAMPLE_JUGOSLAV, nullptr, nullptr);
+        gInputCount = CreateWindowW(L"STATIC", L"0 \u5b57\u7b26", WS_CHILD | WS_VISIBLE, 0, 0, 80, 20, hwnd, (HMENU)IDC_INPUT_COUNT, nullptr, nullptr);
+        gOutputCount = CreateWindowW(L"STATIC", L"0 \u5b57\u7b26", WS_CHILD | WS_VISIBLE, 0, 0, 80, 20, hwnd, (HMENU)IDC_OUTPUT_COUNT, nullptr, nullptr);
         gError = CreateWindowW(L"STATIC", L"", WS_CHILD | WS_VISIBLE, 16, 0, 100, 20, hwnd, (HMENU)IDC_ERROR, nullptr, nullptr);
 
         HWND kids[] = {
@@ -310,7 +289,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         }
 
         SetWindowSubclass(gStatusPill, StatusPillProc, 0, 0);
-        setStatus(L"等待输入", L"就绪", RGB(47, 133, 90));
+        setStatus(gJs.text(L"statusWaiting", L"\u7b49\u5f85\u8f93\u5165"), gJs.text(L"pillReady", L"\u5c31\u7eea"), RGB(47, 133, 90));
         layout(hwnd);
         updateCounts();
         return 0;
@@ -366,6 +345,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
     INITCOMMONCONTROLSEX icc{ sizeof(icc), ICC_STANDARD_CLASSES };
     InitCommonControlsEx(&icc);
 
+    gJs.initialize(hInstance);
+
     const wchar_t CLASS_NAME[] = L"LacinkaWindow";
     WNDCLASSW wc{};
     wc.lpfnWndProc = WndProc;
@@ -376,7 +357,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
     RegisterClassW(&wc);
 
     HWND hwnd = CreateWindowExW(
-        0, CLASS_NAME, L"Lacinka",
+        0, CLASS_NAME, gJs.text(L"windowTitle", L"Lacinka").c_str(),
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT, 1280, 780,
         nullptr, nullptr, hInstance, nullptr);

@@ -1,0 +1,3 @@
+#include "resource.h"
+
+IDR_LACINKA_UI_JS RCDATA "script/app.js"
