@@ -5,6 +5,7 @@
   "main": "main.js",
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
+    "build:transform": "build-transform-cli.bat",
     "start": "node electron-start.js",
     "dist": "electron-builder"
   },

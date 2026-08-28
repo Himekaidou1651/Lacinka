@@ -93,16 +93,12 @@ function setMode(mode) {
   });
 }
 
-function setBusy(flag) {
+function setBusy(flag, nextStatus) {
   state.busy = Boolean(flag);
   $("#run-transform").disabled = state.busy;
   $("#run-transform").classList.toggle("busy", state.busy);
   $("#run-label").textContent = state.busy ? TEXTS.processingButton : TEXTS.runButton;
-  setStatus(state.busy ? TEXTS.statusProcessing : TEXTS.statusDone, state.busy ? TEXTS.pillWorking : TEXTS.pillReady);
-}
-
-function previewTransform(input) {
-  return input;
+  setStatus(state.busy ? TEXTS.statusProcessing : nextStatus || TEXTS.statusDone, state.busy ? TEXTS.pillWorking : TEXTS.pillReady);
 }
 
 function runTransform() {
@@ -116,12 +112,16 @@ function runTransform() {
 
   setError("");
   setBusy(true);
-  setTimeout(function () {
-    state.output = previewTransform(state.input);
-    setBusy(false);
+  window.lacinka.transform(state.input, state.mode).then(function (output) {
+    state.output = output;
+    setBusy(false, TEXTS.statusDone);
     $("#last-run").textContent = TEXTS.lastRunPrefix + new Date().toLocaleTimeString();
     renderText();
-  }, 360);
+  }).catch(function (error) {
+    setBusy(false, TEXTS.statusWaiting);
+    setError(error && error.message ? error.message : "转写失败");
+    showToast("转写失败");
+  });
 }
 
 function clearAll() {

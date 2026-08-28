@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
+const { spawn } = require("child_process");
 const path = require("path");
 
 let mainWindow = null;
@@ -61,3 +62,43 @@ ipcMain.handle("window:always-on-top", (_event, flag) => {
   }
   return false;
 });
+
+ipcMain.handle("transform", async (_event, input, mode) => {
+  return runTransform(String(input || ""), String(mode || "0"));
+});
+
+function runTransform(input, mode) {
+  const exeName = process.platform === "win32" ? "transform_cli.exe" : "transform_cli";
+  const exePath = path.join(__dirname, exeName);
+
+  return new Promise((resolve, reject) => {
+    const child = spawn(exePath, [mode], {
+      windowsHide: true,
+      stdio: ["pipe", "pipe", "pipe"]
+    });
+
+    let output = "";
+    let error = "";
+
+    child.stdout.setEncoding("utf8");
+    child.stderr.setEncoding("utf8");
+    child.stdout.on("data", (chunk) => {
+      output += chunk;
+    });
+    child.stderr.on("data", (chunk) => {
+      error += chunk;
+    });
+    child.on("error", (err) => {
+      reject(new Error(`无法启动转写引擎：${err.message}`));
+    });
+    child.on("close", (code) => {
+      if (code === 0) {
+        resolve(output);
+      } else {
+        reject(new Error(error || `转写引擎退出码：${code}`));
+      }
+    });
+
+    child.stdin.end(input, "utf8");
+  });
+}
