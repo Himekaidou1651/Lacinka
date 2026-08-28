@@ -8,43 +8,108 @@
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <div class="window">
+  <div class="window" data-theme="light">
     <header class="titlebar">
-      <div class="brand" data-drag="true">
+      <div class="brand">
         <div class="brand-mark">L</div>
         <div class="brand-text">
-          <div class="brand-title">Lacinka</div>
-          <div class="brand-subtitle">Electron 骨架</div>
+          <div class="brand-title">Lacinka 转写工具</div>
+          <div class="brand-subtitle">Hellas / Jugoslav / Choseon</div>
         </div>
       </div>
-      <div class="window-actions">
+
+      <div class="header-status">
+        <span class="status-dot"></span>
+        <span id="status-text">等待输入</span>
+      </div>
+
+      <div class="title-actions">
+        <button id="theme-toggle" class="text-button" type="button">深色</button>
+        <label class="pin-toggle">
+          <input id="always-on-top" type="checkbox">
+          <span>置顶</span>
+        </label>
+        <button id="clear-all" class="text-button danger-hover" type="button">清空</button>
         <button id="btn-minimize" class="icon-button" type="button" aria-label="最小化">_</button>
         <button id="btn-close" class="icon-button danger" type="button" aria-label="关闭">×</button>
       </div>
     </header>
 
-    <main class="shell">
-      <section class="hero">
-        <h1>样式的丰富</h1>
-        <p>这是 M1 的最小可运行承载层，用来确认 Electron 窗口、标题栏和基础样式能够先站起来。</p>
+    <main class="workspace">
+      <section class="text-panel input-panel">
+        <div class="panel-head">
+          <div>
+            <span class="eyebrow">输入</span>
+            <h1>待转写内容</h1>
+          </div>
+          <span id="input-count" class="count">0 字符</span>
+        </div>
+        <textarea id="input-text" spellcheck="false" placeholder="在此输入待转写内容..."></textarea>
+        <div class="meter" aria-hidden="true"><span id="input-meter"></span></div>
+        <div class="chips">
+          <button class="chip" type="button" data-sample="0">希腊示例</button>
+          <button class="chip" type="button" data-sample="1">塞尔维亚示例</button>
+          <button class="chip" type="button" data-sample="2">朝鲜语示例</button>
+        </div>
       </section>
 
-      <section class="panel-grid">
-        <article class="panel">
-          <h2>状态</h2>
-          <p>窗口已由 Electron 接管，后续会在这里接回转写逻辑。</p>
-        </article>
-        <article class="panel">
-          <h2>下一步</h2>
-          <p>把现有 `app.js` 的文案、样式变量和行为层迁到渲染进程。</p>
-        </article>
+      <section class="control-panel">
+        <div class="mode-stack" role="radiogroup" aria-label="转写类型">
+          <button class="mode-card active" type="button" data-mode="0" data-accent="blue">
+            <span class="mode-name">Hellas</span>
+            <span class="mode-desc">希腊文字转写</span>
+          </button>
+          <button class="mode-card" type="button" data-mode="1" data-accent="green">
+            <span class="mode-name">Jugoslav</span>
+            <span class="mode-desc">西里尔文字转写</span>
+          </button>
+          <button class="mode-card" type="button" data-mode="2" data-accent="rose">
+            <span class="mode-name">Choseon</span>
+            <span class="mode-desc">朝鲜语罗马音</span>
+          </button>
+        </div>
+
+        <button id="run-transform" class="primary-action" type="button">
+          <span class="play-icon">▶</span>
+          <span class="spinner" aria-hidden="true"></span>
+          <span id="run-label">转写</span>
+        </button>
+
+        <button id="swap-text" class="swap-action" type="button" aria-label="交换输入输出">⇄</button>
+      </section>
+
+      <section class="text-panel output-panel">
+        <div class="panel-head">
+          <div>
+            <span class="eyebrow">输出</span>
+            <h1>转写结果</h1>
+          </div>
+          <div class="output-tools">
+            <button id="copy-output" class="tool-button" type="button">复制</button>
+            <div class="menu-wrap">
+              <button id="download-menu" class="tool-button" type="button" aria-expanded="false">下载 ▾</button>
+              <div id="download-options" class="download-options" hidden>
+                <button type="button" data-download="txt">.txt</button>
+                <button type="button" data-download="json">.json</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="output-text" class="output-box empty">转写结果将在此显示</div>
+        <div class="panel-foot">
+          <span id="output-count" class="count">0 字符</span>
+        </div>
       </section>
     </main>
 
-    <footer class="footer">
-      <span>2026</span>
-      <span id="year"></span>
+    <div id="error-banner" class="error-banner" hidden></div>
+
+    <footer class="statusbar">
+      <span id="pill" class="pill">就绪</span>
+      <span id="last-run">上次运行: --</span>
     </footer>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </div>
 
   <script src="./renderer.js"></script>

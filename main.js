@@ -7,8 +7,8 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 860,
-    minWidth: 1080,
-    minHeight: 720,
+    minWidth: 420,
+    minHeight: 620,
     backgroundColor: "#f7fafc",
     frame: false,
     title: "Lacinka",
@@ -52,4 +52,12 @@ ipcMain.handle("window:close", () => {
   if (mainWindow) {
     mainWindow.close();
   }
+});
+
+ipcMain.handle("window:always-on-top", (_event, flag) => {
+  if (mainWindow) {
+    mainWindow.setAlwaysOnTop(Boolean(flag));
+    return mainWindow.isAlwaysOnTop();
+  }
+  return false;
 });
