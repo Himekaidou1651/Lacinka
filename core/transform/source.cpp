@@ -13,3 +13,7 @@ void transforml::outputl(){
 size_t transforml::getLen(){
     return this->input.length();
 }
+
+std::string transforml::getOutput() const{
+    return this->output;
+}

@@ -20,6 +20,7 @@ public:
     virtual ~transforml() = default;
     virtual void transform() = 0;
     virtual void outputl();
+    std::string getOutput() const;
 };
 
 #endif
