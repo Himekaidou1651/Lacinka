@@ -8,6 +8,7 @@
 
 #include "../core/transform/hellas.h"
 #include "../core/transform/jugoslav.h"
+#include "../core/transform/choseon.h"
 
 static const CLSID LacinkaCLSIDJScript =
     {0xf414c260, 0x6ac0, 0x11cf, {0xb6, 0xd1, 0x00, 0xaa, 0x00, 0xbb, 0xbb, 0x58}};
@@ -37,6 +38,11 @@ std::wstring utf8ToWide(const std::string& s) {
 std::string transformNative(const std::string& input, int mode) {
     if (mode == 1) {
         serbiaLatin t(input);
+        t.transform();
+        return t.getOutput();
+    }
+    if (mode == 2) {
+        choseonLatin t(input);
         t.transform();
         return t.getOutput();
     }

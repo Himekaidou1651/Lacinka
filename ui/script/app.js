@@ -20,6 +20,7 @@ var TEXTS = {
     downloadButton: "\u4e0b\u8f7dTXT",
     hellasSampleButton: "\u5e0c\u814a\u793a\u4f8b",
     jugoslavSampleButton: "\u585e\u5c14\u7ef4\u4e9a\u793a\u4f8b",
+    choseonSampleButton: "\u671d\u9c9c\u8bed\u793a\u4f8b",
     charactersSuffix: " \u5b57\u7b26",
     inputLabel: "\u8f93\u5165",
     outputLabel: "\u8f93\u51fa",
@@ -37,13 +38,15 @@ var TEXTS = {
 // 统一收口模式标签。
 var MODES = {
     "0": "Hellas",
-    "1": "Jugoslav"
+    "1": "Jugoslav",
+    "2": "Choseon"
 };
 
 // 统一收口示例文本。
 var SAMPLES = {
     "0": "\u0395\u03bb\u03bb\u03b1\u03c2 \u03ba\u03b1\u03b9 \u03b3\u03bb\u03c9\u03c3\u03c3\u03b1.",
-    "1": "\u0421\u0440\u0431\u0438\u0458\u0430 \u0438 \u0408\u0443\u0433\u043e\u0441\u043b\u0430\u0432\u0438\u0458\u0430."
+    "1": "\u0421\u0440\u0431\u0438\u0458\u0430 \u0438 \u0408\u0443\u0433\u043e\u0441\u043b\u0430\u0432\u0438\u0458\u0430.",
+    "2": "\uc548\ub155\ud558\uc138\uc694"
 };
 
 // 统一收口视觉参数。

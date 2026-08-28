@@ -15,6 +15,7 @@ g++ -std=c++17 \
   core/transform/source.cpp \
   core/transform/hellas.cpp \
   core/transform/jugoslav.cpp \
+  core/transform/choseon.cpp \
   tmp/resources.o \
   -o Lacinka.exe \
   -municode -mwindows \

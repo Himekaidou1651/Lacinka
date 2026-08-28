@@ -29,6 +29,8 @@ static const int IDC_MODE_HELLAS = 1008;
 static const int IDC_MODE_JUGOSLAV = 1009;
 static const int IDC_SAMPLE_HELLAS = 1010;
 static const int IDC_SAMPLE_JUGOSLAV = 1011;
+static const int IDC_MODE_CHOSEON = 1012;
+static const int IDC_SAMPLE_CHOSEON = 1013;
 
 static const UINT_PTR TOAST_TIMER = 1;
 
@@ -38,6 +40,7 @@ static HWND gOutput = nullptr;
 static HWND gRunBtn = nullptr;
 static HWND gHellas = nullptr;
 static HWND gJugoslav = nullptr;
+static HWND gChoseon = nullptr;
 
 static JsRuntime gJs;
 
@@ -267,6 +270,7 @@ static void setMode(int mode) {
     gMode = mode;
     InvalidateRect(gHellas, nullptr, FALSE);
     InvalidateRect(gJugoslav, nullptr, FALSE);
+    InvalidateRect(gChoseon, nullptr, FALSE);
 }
 
 static void updateCounts() {
@@ -334,8 +338,7 @@ static void swapText() {
     updateCounts();
 }
 
-static void fillSample(bool hellas) {
-    int mode = hellas ? 0 : 1;
+static void fillSample(int mode) {
     setText(gInput, gJs.sample(mode, L""));
     setMode(mode);
     gErrorText.clear();
@@ -440,8 +443,11 @@ static void drawButton(DRAWITEMSTRUCT* dis) {
         break;
     }
     case IDC_MODE_HELLAS:
-    case IDC_MODE_JUGOSLAV: {
-        bool selected = (id == IDC_MODE_HELLAS) ? (gMode == 0) : (gMode == 1);
+    case IDC_MODE_JUGOSLAV:
+    case IDC_MODE_CHOSEON: {
+        bool selected = (id == IDC_MODE_HELLAS) ? (gMode == 0)
+                        : (id == IDC_MODE_JUGOSLAV) ? (gMode == 1)
+                        : (gMode == 2);
         radius = rPanel;
         fill = selected ? gPrimarySoft : (hover ? gSurfaceAlt : gSurface);
         border = selected ? gPrimary : gBorder;
@@ -451,7 +457,8 @@ static void drawButton(DRAWITEMSTRUCT* dis) {
         break;
     }
     case IDC_SAMPLE_HELLAS:
-    case IDC_SAMPLE_JUGOSLAV: {
+    case IDC_SAMPLE_JUGOSLAV:
+    case IDC_SAMPLE_CHOSEON: {
         radius = rPill;
         fill = hover ? gPrimarySoft : gSurface;
         border = gBorder;
@@ -485,7 +492,7 @@ static void drawButton(DRAWITEMSTRUCT* dis) {
     DrawTextW(hdc, label, -1, &rc, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
     SelectObject(hdc, old);
 
-    if ((dis->itemState & ODS_FOCUS) && id != IDC_SAMPLE_HELLAS && id != IDC_SAMPLE_JUGOSLAV) {
+    if ((dis->itemState & ODS_FOCUS) && id != IDC_SAMPLE_HELLAS && id != IDC_SAMPLE_JUGOSLAV && id != IDC_SAMPLE_CHOSEON) {
         RECT fr = rc;
         InflateRect(&fr, -4, -4);
         DrawFocusRect(hdc, &fr);
@@ -560,6 +567,7 @@ static void layout(HWND hwnd) {
         int chipY = inEditBottom + 4;
         MoveWindow(GetDlgItem(hwnd, IDC_SAMPLE_HELLAS), pad, chipY, 84, 22, TRUE);
         MoveWindow(GetDlgItem(hwnd, IDC_SAMPLE_JUGOSLAV), pad + 84 + gapSm, chipY, 112, 22, TRUE);
+        MoveWindow(GetDlgItem(hwnd, IDC_SAMPLE_CHOSEON), pad + 84 + gapSm + 112 + gapSm, chipY, 112, 22, TRUE);
 
         gOutputLabelRect = {outX, bodyTop, outX + rightW, bodyTop + labelH};
         int outEditTop = bodyTop + labelH + 4;
@@ -570,7 +578,8 @@ static void layout(HWND hwnd) {
         int cardH = 40;
         MoveWindow(gHellas, ctrlX, cy, ctrlW, cardH, TRUE);
         MoveWindow(gJugoslav, ctrlX, cy + cardH + gapSm, ctrlW, cardH, TRUE);
-        int runY = cy + cardH * 2 + gapSm * 2 + gapMd;
+        MoveWindow(gChoseon, ctrlX, cy + (cardH + gapSm) * 2, ctrlW, cardH, TRUE);
+        int runY = cy + cardH * 3 + gapSm * 3 + gapMd;
         MoveWindow(gRunBtn, ctrlX, runY, ctrlW, 46, TRUE);
         MoveWindow(GetDlgItem(hwnd, IDC_SWAP), ctrlX, runY + 46 + gapSm, ctrlW, 32, TRUE);
         int half = (ctrlW - gapSm) / 2;
@@ -586,10 +595,13 @@ static void layout(HWND hwnd) {
         gInputCountRect = {pad + columnW - 110, inTop + inputH + 2, pad + columnW, inTop + inputH + 22};
         MoveWindow(GetDlgItem(hwnd, IDC_SAMPLE_HELLAS), pad, inTop + inputH + 2, 84, 22, TRUE);
         MoveWindow(GetDlgItem(hwnd, IDC_SAMPLE_JUGOSLAV), pad + 92, inTop + inputH + 2, 112, 22, TRUE);
+        MoveWindow(GetDlgItem(hwnd, IDC_SAMPLE_CHOSEON), pad + 92 + 112 + gapSm, inTop + inputH + 2, 112, 22, TRUE);
 
         int cy = inTop + inputH + 34;
-        MoveWindow(gHellas, pad, cy, columnW / 2 - 4, 36, TRUE);
-        MoveWindow(gJugoslav, pad + columnW / 2 + 4, cy, columnW / 2 - 4, 36, TRUE);
+        int cardW = (columnW - gapSm * 2) / 3;
+        MoveWindow(gHellas, pad, cy, cardW, 36, TRUE);
+        MoveWindow(gJugoslav, pad + cardW + gapSm, cy, cardW, 36, TRUE);
+        MoveWindow(gChoseon, pad + (cardW + gapSm) * 2, cy, cardW, 36, TRUE);
         MoveWindow(gRunBtn, pad, cy + 44, columnW, 42, TRUE);
         MoveWindow(GetDlgItem(hwnd, IDC_SWAP), pad, cy + 92, columnW, 30, TRUE);
         int half = (columnW - gapSm) / 2;
@@ -625,6 +637,8 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
                                 0, 0, 0, 0, hwnd, (HMENU)IDC_MODE_HELLAS, nullptr, nullptr);
         gJugoslav = CreateWindowW(L"BUTTON", gJs.modeLabel(1, L"Jugoslav").c_str(), WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_OWNERDRAW,
                                   0, 0, 0, 0, hwnd, (HMENU)IDC_MODE_JUGOSLAV, nullptr, nullptr);
+        gChoseon = CreateWindowW(L"BUTTON", gJs.modeLabel(2, L"Choseon").c_str(), WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_OWNERDRAW,
+                                 0, 0, 0, 0, hwnd, (HMENU)IDC_MODE_CHOSEON, nullptr, nullptr);
         gRunBtn = CreateWindowW(L"BUTTON", gJs.text(L"runButton", L"转写").c_str(), WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_OWNERDRAW,
                                 0, 0, 0, 0, hwnd, (HMENU)IDC_RUN, nullptr, nullptr);
         CreateWindowW(L"BUTTON", gJs.text(L"clearButton", L"清空").c_str(), WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_OWNERDRAW,
@@ -639,11 +653,14 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
                       0, 0, 0, 0, hwnd, (HMENU)IDC_SAMPLE_HELLAS, nullptr, nullptr);
         CreateWindowW(L"BUTTON", gJs.text(L"jugoslavSampleButton", L"塞尔维亚示例").c_str(), WS_CHILD | WS_VISIBLE | BS_OWNERDRAW,
                       0, 0, 0, 0, hwnd, (HMENU)IDC_SAMPLE_JUGOSLAV, nullptr, nullptr);
+        CreateWindowW(L"BUTTON", gJs.text(L"choseonSampleButton", L"朝鲜语示例").c_str(), WS_CHILD | WS_VISIBLE | BS_OWNERDRAW,
+                      0, 0, 0, 0, hwnd, (HMENU)IDC_SAMPLE_CHOSEON, nullptr, nullptr);
 
-        HWND subs[] = {gHellas, gJugoslav, gRunBtn,
+        HWND subs[] = {gHellas, gJugoslav, gChoseon, gRunBtn,
                        GetDlgItem(hwnd, IDC_CLEAR), GetDlgItem(hwnd, IDC_SWAP),
                        GetDlgItem(hwnd, IDC_COPY), GetDlgItem(hwnd, IDC_DOWNLOAD),
-                       GetDlgItem(hwnd, IDC_SAMPLE_HELLAS), GetDlgItem(hwnd, IDC_SAMPLE_JUGOSLAV)};
+                       GetDlgItem(hwnd, IDC_SAMPLE_HELLAS), GetDlgItem(hwnd, IDC_SAMPLE_JUGOSLAV),
+                       GetDlgItem(hwnd, IDC_SAMPLE_CHOSEON)};
         for (HWND b : subs) SetWindowSubclass(b, OwnerBtnProc, 0, 0);
 
         gMode = 0;
@@ -708,13 +725,15 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
         switch (id) {
         case IDC_MODE_HELLAS: setMode(0); return 0;
         case IDC_MODE_JUGOSLAV: setMode(1); return 0;
+        case IDC_MODE_CHOSEON: setMode(2); return 0;
         case IDC_RUN: runTransform(); return 0;
         case IDC_CLEAR: clearAll(); return 0;
         case IDC_SWAP: swapText(); return 0;
         case IDC_COPY: copyOutput(); return 0;
         case IDC_DOWNLOAD: downloadOutput(); return 0;
-        case IDC_SAMPLE_HELLAS: fillSample(true); return 0;
-        case IDC_SAMPLE_JUGOSLAV: fillSample(false); return 0;
+        case IDC_SAMPLE_HELLAS: fillSample(0); return 0;
+        case IDC_SAMPLE_JUGOSLAV: fillSample(1); return 0;
+        case IDC_SAMPLE_CHOSEON: fillSample(2); return 0;
         case IDC_INPUT:
             if (HIWORD(wParam) == EN_CHANGE) updateCounts();
             return 0;
