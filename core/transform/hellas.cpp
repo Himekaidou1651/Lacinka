@@ -101,21 +101,21 @@ void hellasLatin::transform() {
     replaceAll(s, "\xCE\xA8", "Ps");   // Ψ → Ps
     replaceAll(s, "\xCE\xA9", "\xC5\x8C"); // Ω → Ō
     // 大写带重音
-    replaceAll(s, "\xCE\x86", "\xC1");   // Ά → Á
-    replaceAll(s, "\xCE\x88", "\xC9");   // Έ → É
-    replaceAll(s, "\xCE\x89", "\xC7\xBD"); // Ή → Ǽ
-    replaceAll(s, "\xCE\x8A", "\xCD");   // Ί → Í
-    replaceAll(s, "\xCE\x8C", "\xD3");   // Ό → Ó
-    replaceAll(s, "\xCE\x8E", "\xDD");   // Ύ → Ý
-    replaceAll(s, "\xCE\x8F", "\xD5\x92"); // Ώ → Ṓ
+    replaceAll(s, "\xCE\x86", "\xC3\x81");   // Ά → Á
+    replaceAll(s, "\xCE\x88", "\xC3\x89");   // Έ → É
+    replaceAll(s, "\xCE\x89", "\xC7\xBC"); // Ή → Ǽ
+    replaceAll(s, "\xCE\x8A", "\xC3\x8D");   // Ί → Í
+    replaceAll(s, "\xCE\x8C", "\xC3\x93");   // Ό → Ó
+    replaceAll(s, "\xCE\x8E", "\xC3\x9D");   // Ύ → Ý
+    replaceAll(s, "\xCE\x8F", "\xE1\xB9\x92"); // Ώ → Ṓ
     // 小写带重音
-    replaceAll(s, "\xCE\xAC", "\xE1");   // ά → á
-    replaceAll(s, "\xCE\xAD", "\xE9");   // έ → é
-    replaceAll(s, "\xCE\xAE", "\xE7\xBD"); // ή → ǽ
-    replaceAll(s, "\xCE\xAF", "\xED");   // ί → í
-    replaceAll(s, "\xCF\x8C", "\xF3");   // ό → ó
-    replaceAll(s, "\xCF\x8D", "\xFD");   // ύ → ý
-    replaceAll(s, "\xCF\x8E", "\xF5\x92"); // ώ → ṓ
+    replaceAll(s, "\xCE\xAC", "\xC3\xA1");   // ά → á
+    replaceAll(s, "\xCE\xAD", "\xC3\xA9");   // έ → é
+    replaceAll(s, "\xCE\xAE", "\xC7\xBD"); // ή → ǽ
+    replaceAll(s, "\xCE\xAF", "\xC3\xAD");   // ί → í
+    replaceAll(s, "\xCF\x8C", "\xC3\xB3");   // ό → ó
+    replaceAll(s, "\xCF\x8D", "\xC3\xBD");   // ύ → ý
+    replaceAll(s, "\xCF\x8E", "\xE1\xB9\x93"); // ώ → ṓ
 
     this->output = s;
 }

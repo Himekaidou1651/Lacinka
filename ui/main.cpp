@@ -8,6 +8,7 @@
 #include <cstdlib>
 
 #include "js_runtime.h"
+#include "resource.h"
 
 typedef HANDLE DPI_AWARENESS_CONTEXT;
 #ifndef DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2
@@ -801,6 +802,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR, int nCmdShow) {
     wc.lpszClassName = CLASS_NAME;
     wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
     wc.hbrBackground = gBgBrush;
+    wc.hIcon = LoadIconW(hInstance, MAKEINTRESOURCEW(IDI_LACINKA));
     RegisterClassW(&wc);
 
     HWND hwnd = CreateWindowExW(
