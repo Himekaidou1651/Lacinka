@@ -21,10 +21,17 @@ var TEXTS = {
     hellasSampleButton: "\u5e0c\u814a\u793a\u4f8b",
     jugoslavSampleButton: "\u585e\u5c14\u7ef4\u4e9a\u793a\u4f8b",
     charactersSuffix: " \u5b57\u7b26",
+    inputLabel: "\u8f93\u5165",
+    outputLabel: "\u8f93\u51fa",
     lastRunPrefix: "\u4e0a\u6b21\u8fd0\u884c: ",
     neverRun: "--",
     emptyOutput: "\u8f6c\u5199\u7ed3\u679c\u5c06\u5728\u6b64\u663e\u793a",
-    emptyInput: "\u5728\u6b64\u8f93\u5165\u5f85\u8f6c\u5199\u5185\u5bb9..."
+    emptyInput: "\u5728\u6b64\u8f93\u5165\u5f85\u8f6c\u5199\u5185\u5bb9...",
+    emptyWarning: "\u8bf7\u5148\u8f93\u5165\u5f85\u8f6c\u5199\u5185\u5bb9",
+    downloadSuccess: "\u5df2\u4fdd\u5b58\u6587\u4ef6",
+    downloadCancelled: "\u5df2\u53d6\u6d88\u4fdd\u5b58",
+    fontFamily: "Segoe UI",
+    monoFontFamily: "Consolas"
 };
 
 // 统一收口模式标签。
@@ -107,7 +114,14 @@ var api = {
         return TEXTS[key] || key;
     },
     number: function (key) {
-        return STYLE.layout[key] || 0;
+        if (typeof STYLE.layout[key] === "number") return STYLE.layout[key];
+        if (typeof STYLE.spacing[key] === "number") return STYLE.spacing[key];
+        if (typeof STYLE.radius[key] === "number") return STYLE.radius[key];
+        if (typeof STYLE.font[key] === "number") return STYLE.font[key];
+        return 0;
+    },
+    color: function (key) {
+        return STYLE.palette[key] || "";
     },
     modeLabel: function (mode) {
         return MODES[String(mode)] || String(mode);
@@ -293,6 +307,10 @@ function lacinkaModeLabel(mode) {
 
 function lacinkaSample(mode) {
     return sample(mode);
+}
+
+function lacinkaColor(key) {
+    return api.color(key);
 }
 
 function lacinkaTransform(input, mode) {

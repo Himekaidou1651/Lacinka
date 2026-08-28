@@ -408,6 +408,11 @@ public:
         return callString(L"lacinkaSample", {std::to_wstring(mode)}, value) ? value : fallback;
     }
 
+    std::wstring color(const std::wstring& key, const std::wstring& fallback) {
+        std::wstring value;
+        return callString(L"lacinkaColor", {key}, value) ? value : fallback;
+    }
+
     std::string transform(const std::string& input, int mode) {
         if (!ready()) {
             return transformNative(input, mode);
@@ -539,6 +544,10 @@ std::wstring JsRuntime::modeLabel(int mode, const std::wstring& fallback) {
 
 std::wstring JsRuntime::sample(int mode, const std::wstring& fallback) {
     return impl->sample(mode, fallback);
+}
+
+std::wstring JsRuntime::color(const std::wstring& key, const std::wstring& fallback) {
+    return impl->color(key, fallback);
 }
 
 std::string JsRuntime::transform(const std::string& input, int mode) {

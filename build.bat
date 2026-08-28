@@ -24,7 +24,7 @@ popd
   -o Lacinka.exe ^
   -municode -mwindows ^
   -loleaut32 -lole32 -luuid ^
-  -lcomctl32 -lshell32
+  -lcomctl32 -lshell32 -lcomdlg32
 if errorlevel 1 goto :fail
 
 echo Build complete: Lacinka.exe
