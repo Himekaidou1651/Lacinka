@@ -1,165 +1,13 @@
 //serbia to hrvatska
 #include "jugoslav.h"
 
-namespace {
-using Codepoint = uint32_t;
-using Text = std::vector<Codepoint>;
-
-static std::string encodeUtf8(const Text& text) {
-    std::string out;
-    for (Codepoint cp : text) {
-        if (cp <= 0x7F) {
-            out.push_back(static_cast<char>(cp));
-        } else if (cp <= 0x7FF) {
-            out.push_back(static_cast<char>(0xC0 | (cp >> 6)));
-            out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
-        } else if (cp <= 0xFFFF) {
-            out.push_back(static_cast<char>(0xE0 | (cp >> 12)));
-            out.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
-            out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
-        } else {
-            out.push_back(static_cast<char>(0xF0 | (cp >> 18)));
-            out.push_back(static_cast<char>(0x80 | ((cp >> 12) & 0x3F)));
-            out.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
-            out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
-        }
+static void replaceAll(std::string& s, const std::string& from, const std::string& to) {
+    size_t pos = 0;
+    while ((pos = s.find(from, pos)) != std::string::npos) {
+        s.replace(pos, from.length(), to);
+        pos += to.length();
     }
-    return out;
 }
-
-static Text decodeUtf8(const std::string& input) {
-    Text out;
-    for (size_t i = 0; i < input.size();) {
-        unsigned char c = static_cast<unsigned char>(input[i]);
-        if (c < 0x80) {
-            out.push_back(c);
-            ++i;
-            continue;
-        }
-
-        size_t len = 0;
-        Codepoint cp = 0;
-        if ((c >> 5) == 0x6) {
-            len = 2;
-            cp = c & 0x1F;
-        } else if ((c >> 4) == 0xE) {
-            len = 3;
-            cp = c & 0x0F;
-        } else if ((c >> 3) == 0x1E) {
-            len = 4;
-            cp = c & 0x07;
-        } else {
-            out.push_back(0xFFFD);
-            ++i;
-            continue;
-        }
-
-        if (i + len > input.size()) {
-            out.push_back(0xFFFD);
-            ++i;
-            continue;
-        }
-
-        bool valid = true;
-        for (size_t j = 1; j < len; ++j) {
-            unsigned char cc = static_cast<unsigned char>(input[i + j]);
-            if ((cc >> 6) != 0x2) {
-                valid = false;
-                break;
-            }
-            cp = (cp << 6) | (cc & 0x3F);
-        }
-
-        if (!valid) {
-            out.push_back(0xFFFD);
-            ++i;
-            continue;
-        }
-
-        if ((len == 2 && cp < 0x80) || (len == 3 && cp < 0x800) || (len == 4 && cp < 0x10000) ||
-            cp > 0x10FFFF || (cp >= 0xD800 && cp <= 0xDFFF)) {
-            out.push_back(0xFFFD);
-            ++i;
-            continue;
-        }
-
-        out.push_back(cp);
-        i += len;
-    }
-    return out;
-}
-
-static Text transliterate(const Text& input) {
-    Text out;
-    out.reserve(input.size() * 2);
-    for (Codepoint cp : input) {
-        switch (cp) {
-            case 0x0410: out.push_back(U'A'); break;
-            case 0x0430: out.push_back(U'a'); break;
-            case 0x0411: out.push_back(U'B'); break;
-            case 0x0431: out.push_back(U'b'); break;
-            case 0x0412: out.push_back(U'V'); break;
-            case 0x0432: out.push_back(U'v'); break;
-            case 0x0413: out.push_back(U'G'); break;
-            case 0x0433: out.push_back(U'g'); break;
-            case 0x0414: out.push_back(U'D'); break;
-            case 0x0434: out.push_back(U'd'); break;
-            case 0x0402: out.push_back(0x0110); break;
-            case 0x0452: out.push_back(0x0111); break;
-            case 0x0415: out.push_back(U'E'); break;
-            case 0x0435: out.push_back(U'e'); break;
-            case 0x0416: out.push_back(0x017D); break;
-            case 0x0436: out.push_back(0x017E); break;
-            case 0x0417: out.push_back(U'Z'); break;
-            case 0x0437: out.push_back(U'z'); break;
-            case 0x0418: out.push_back(U'I'); break;
-            case 0x0438: out.push_back(U'i'); break;
-            case 0x0408: out.push_back(U'J'); break;
-            case 0x0458: out.push_back(U'j'); break;
-            case 0x041A: out.push_back(U'K'); break;
-            case 0x043A: out.push_back(U'k'); break;
-            case 0x041B: out.push_back(U'L'); break;
-            case 0x043B: out.push_back(U'l'); break;
-            case 0x0409: out.push_back(U'L'); out.push_back(U'j'); break;
-            case 0x0459: out.push_back(U'l'); out.push_back(U'j'); break;
-            case 0x041C: out.push_back(U'M'); break;
-            case 0x043C: out.push_back(U'm'); break;
-            case 0x041D: out.push_back(U'N'); break;
-            case 0x043D: out.push_back(U'n'); break;
-            case 0x040A: out.push_back(U'N'); out.push_back(U'j'); break;
-            case 0x045A: out.push_back(U'n'); out.push_back(U'j'); break;
-            case 0x041E: out.push_back(U'O'); break;
-            case 0x043E: out.push_back(U'o'); break;
-            case 0x041F: out.push_back(U'P'); break;
-            case 0x043F: out.push_back(U'p'); break;
-            case 0x0420: out.push_back(U'R'); break;
-            case 0x0440: out.push_back(U'r'); break;
-            case 0x0421: out.push_back(U'S'); break;
-            case 0x0441: out.push_back(U's'); break;
-            case 0x0422: out.push_back(U'T'); break;
-            case 0x0442: out.push_back(U't'); break;
-            case 0x040B: out.push_back(0x0106); break;
-            case 0x045B: out.push_back(0x0107); break;
-            case 0x0423: out.push_back(U'U'); break;
-            case 0x0443: out.push_back(U'u'); break;
-            case 0x0424: out.push_back(U'F'); break;
-            case 0x0444: out.push_back(U'f'); break;
-            case 0x0425: out.push_back(U'H'); break;
-            case 0x0445: out.push_back(U'h'); break;
-            case 0x0426: out.push_back(U'C'); break;
-            case 0x0446: out.push_back(U'c'); break;
-            case 0x0427: out.push_back(0x010C); break;
-            case 0x0447: out.push_back(0x010D); break;
-            case 0x040F: out.push_back(U'D'); out.push_back(0x017E); break;
-            case 0x045F: out.push_back(U'd'); out.push_back(0x017E); break;
-            case 0x0428: out.push_back(0x0160); break;
-            case 0x0448: out.push_back(0x0161); break;
-            default: out.push_back(cp); break;
-        }
-    }
-    return out;
-}
-} // namespace
 
 serbiaLatin::serbiaLatin(std::string input)
     : transforml(input) {
@@ -167,9 +15,74 @@ serbiaLatin::serbiaLatin(std::string input)
 }
 
 void serbiaLatin::transform() {
-    Text input = decodeUtf8(this->input);
-    Text output = transliterate(input);
-    this->output = encodeUtf8(output);
+    std::string s = this->input;
+
+    // 塞尔维亚西里尔字母 → 拉丁字母
+    // 大写
+    replaceAll(s, "\xD0\x90", "A");  // А → A
+    replaceAll(s, "\xD0\x91", "B");  // Б → B
+    replaceAll(s, "\xD0\x92", "V");  // В → V
+    replaceAll(s, "\xD0\x93", "G");  // Г → G
+    replaceAll(s, "\xD0\x94", "D");  // Д → D
+    replaceAll(s, "\xD0\x82", "\xC4\x90");  // Ђ → Đ
+    replaceAll(s, "\xD0\x95", "E");  // Е → E
+    replaceAll(s, "\xD0\x96", "\xC5\xBD");  // Ж → Ž
+    replaceAll(s, "\xD0\x97", "Z");  // З → Z
+    replaceAll(s, "\xD0\x98", "I");  // И → I
+    replaceAll(s, "\xD0\x88", "J");  // Ј → J
+    replaceAll(s, "\xD0\x9A", "K");  // К → K
+    replaceAll(s, "\xD0\x9B", "L");  // Л → L
+    replaceAll(s, "\xD0\x89", "Lj"); // Љ → Lj
+    replaceAll(s, "\xD0\x9C", "M");  // М → M
+    replaceAll(s, "\xD0\x9D", "N");  // Н → N
+    replaceAll(s, "\xD0\x8A", "Nj"); // Њ → Nj
+    replaceAll(s, "\xD0\x9E", "O");  // О → O
+    replaceAll(s, "\xD0\x9F", "P");  // П → P
+    replaceAll(s, "\xD0\xA0", "R");  // Р → R
+    replaceAll(s, "\xD0\xA1", "S");  // С → S
+    replaceAll(s, "\xD0\xA2", "T");  // Т → T
+    replaceAll(s, "\xD0\x8B", "\xC4\x86");  // Ћ → Ć
+    replaceAll(s, "\xD0\xA3", "U");  // У → U
+    replaceAll(s, "\xD0\xA4", "F");  // Ф → F
+    replaceAll(s, "\xD0\xA5", "H");  // Х → H
+    replaceAll(s, "\xD0\xA6", "C");  // Ц → C
+    replaceAll(s, "\xD0\xA7", "\xC4\x8C");  // Ч → Č
+    replaceAll(s, "\xD0\x8F", "D\u017E");  // Џ → Dž (use UTF-8 for ž)
+    replaceAll(s, "\xD0\xA8", "\xC5\xA0");  // Ш → Š
+
+    // 小写
+    replaceAll(s, "\xD0\xB0", "a");  // а → a
+    replaceAll(s, "\xD0\xB1", "b");  // б → b
+    replaceAll(s, "\xD0\xB2", "v");  // в → v
+    replaceAll(s, "\xD0\xB3", "g");  // г → g
+    replaceAll(s, "\xD0\xB4", "d");  // д → d
+    replaceAll(s, "\xD1\x92", "\xC4\x91");  // ђ → đ
+    replaceAll(s, "\xD0\xB5", "e");  // е → e
+    replaceAll(s, "\xD0\xB6", "\xC5\xBE");  // ж → ž
+    replaceAll(s, "\xD0\xB7", "z");  // з → z
+    replaceAll(s, "\xD0\xB8", "i");  // и → i
+    replaceAll(s, "\xD1\x98", "j");  // ј → j
+    replaceAll(s, "\xD0\xBA", "k");  // к → k
+    replaceAll(s, "\xD0\xBB", "l");  // л → l
+    replaceAll(s, "\xD1\x99", "lj"); // љ → lj
+    replaceAll(s, "\xD0\xBC", "m");  // м → m
+    replaceAll(s, "\xD0\xBD", "n");  // н → n
+    replaceAll(s, "\xD1\x9A", "nj"); // њ → nj
+    replaceAll(s, "\xD0\xBE", "o");  // о → o
+    replaceAll(s, "\xD0\xBF", "p");  // п → p
+    replaceAll(s, "\xD1\x80", "r");  // р → r
+    replaceAll(s, "\xD1\x81", "s");  // с → s
+    replaceAll(s, "\xD1\x82", "t");  // т → t
+    replaceAll(s, "\xD1\x9B", "\xC4\x87");  // ћ → ć
+    replaceAll(s, "\xD1\x83", "u");  // у → u
+    replaceAll(s, "\xD1\x84", "f");  // ф → f
+    replaceAll(s, "\xD1\x85", "h");  // х → h
+    replaceAll(s, "\xD1\x86", "c");  // ц → c
+    replaceAll(s, "\xD1\x87", "\xC4\x8D");  // ч → č
+    replaceAll(s, "\xD1\x9F", "d\u017E");  // џ → dž (use UTF-8 for ž)
+    replaceAll(s, "\xD1\x88", "\xC5\xA1");  // ш → š
+
+    this->output = s;
 }
 
 void serbiaLatin::outputl() {

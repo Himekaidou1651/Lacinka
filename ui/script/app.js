@@ -116,7 +116,7 @@ var api = {
         return SAMPLES[String(mode)] || "";
     },
     transform: function (input, mode) {
-        return nativeHost.transform(String(mode), String(input));
+        return nativeHost.transform(String(input), String(mode));
     }
 };
 

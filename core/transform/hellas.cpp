@@ -1,186 +1,13 @@
 //Hellas to Latin
 #include "hellas.h"
 
-namespace {
-using Codepoint = uint32_t;
-using Text = std::vector<Codepoint>;
-
-enum class CaseStyle {
-    lower,
-    title,
-    upper
-};
-
-static bool isGreekUpper(Codepoint cp) {
-    return (cp >= 0x0391 && cp <= 0x03A9 && cp != 0x03A2);
-}
-
-static bool isGreekLower(Codepoint cp) {
-    return (cp >= 0x03B1 && cp <= 0x03C9) || cp == 0x03C2;
-}
-
-static Codepoint toGreekLower(Codepoint cp) {
-    if (cp >= 0x0391 && cp <= 0x03A9 && cp != 0x03A2) {
-        return cp + 0x20;
-    }
-    return cp;
-}
-
-static CaseStyle detectCase(const Text& text, size_t pos, size_t len) {
-    bool allUpper = true;
-    bool allLower = true;
-    bool firstUpper = isGreekUpper(text[pos]);
-
-    for (size_t i = 0; i < len; ++i) {
-        Codepoint cp = text[pos + i];
-        if (isGreekUpper(cp)) {
-            allLower = false;
-        } else if (isGreekLower(cp)) {
-            allUpper = false;
-        } else {
-            allUpper = false;
-            allLower = false;
-        }
-    }
-
-    if (allLower) {
-        return CaseStyle::lower;
-    }
-    if (allUpper) {
-        return CaseStyle::upper;
-    }
-    if (firstUpper) {
-        return CaseStyle::title;
-    }
-    return CaseStyle::lower;
-}
-
-static Codepoint toLatinUpper(Codepoint cp) {
-    if (cp >= U'a' && cp <= U'z') {
-        return cp - 0x20;
-    }
-    switch (cp) {
-        case 0x0113: return 0x0112;
-        case 0x014D: return 0x014C;
-        case 0x0161: return 0x0160;
-        default: return cp;
+static void replaceAll(std::string& s, const std::string& from, const std::string& to) {
+    size_t pos = 0;
+    while ((pos = s.find(from, pos)) != std::string::npos) {
+        s.replace(pos, from.length(), to);
+        pos += to.length();
     }
 }
-
-static Text applyCase(const Text& base, CaseStyle style) {
-    if (style == CaseStyle::lower) {
-        return base;
-    }
-
-    Text out;
-    out.reserve(base.size());
-    for (size_t i = 0; i < base.size(); ++i) {
-        Codepoint cp = base[i];
-        if (i > 0) {
-            out.push_back(cp);
-        } else {
-            out.push_back(toLatinUpper(cp));
-        }
-    }
-    return out;
-}
-
-static std::string encodeUtf8(const Text& text) {
-    std::string out;
-    for (Codepoint cp : text) {
-        if (cp <= 0x7F) {
-            out.push_back(static_cast<char>(cp));
-        } else if (cp <= 0x7FF) {
-            out.push_back(static_cast<char>(0xC0 | (cp >> 6)));
-            out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
-        } else if (cp <= 0xFFFF) {
-            out.push_back(static_cast<char>(0xE0 | (cp >> 12)));
-            out.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
-            out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
-        } else {
-            out.push_back(static_cast<char>(0xF0 | (cp >> 18)));
-            out.push_back(static_cast<char>(0x80 | ((cp >> 12) & 0x3F)));
-            out.push_back(static_cast<char>(0x80 | ((cp >> 6) & 0x3F)));
-            out.push_back(static_cast<char>(0x80 | (cp & 0x3F)));
-        }
-    }
-    return out;
-}
-
-static Text decodeUtf8(const std::string& input) {
-    Text out;
-    for (size_t i = 0; i < input.size();) {
-        unsigned char c = static_cast<unsigned char>(input[i]);
-        if (c < 0x80) {
-            out.push_back(c);
-            ++i;
-            continue;
-        }
-
-        size_t len = 0;
-        Codepoint cp = 0;
-        if ((c >> 5) == 0x6) {
-            len = 2;
-            cp = c & 0x1F;
-        } else if ((c >> 4) == 0xE) {
-            len = 3;
-            cp = c & 0x0F;
-        } else if ((c >> 3) == 0x1E) {
-            len = 4;
-            cp = c & 0x07;
-        } else {
-            out.push_back(0xFFFD);
-            ++i;
-            continue;
-        }
-
-        if (i + len > input.size()) {
-            out.push_back(0xFFFD);
-            ++i;
-            continue;
-        }
-
-        bool valid = true;
-        for (size_t j = 1; j < len; ++j) {
-            unsigned char cc = static_cast<unsigned char>(input[i + j]);
-            if ((cc >> 6) != 0x2) {
-                valid = false;
-                break;
-            }
-            cp = (cp << 6) | (cc & 0x3F);
-        }
-
-        if (!valid) {
-            out.push_back(0xFFFD);
-            ++i;
-            continue;
-        }
-
-        if ((len == 2 && cp < 0x80) || (len == 3 && cp < 0x800) || (len == 4 && cp < 0x10000) ||
-            cp > 0x10FFFF || (cp >= 0xD800 && cp <= 0xDFFF)) {
-            out.push_back(0xFFFD);
-            ++i;
-            continue;
-        }
-
-        out.push_back(cp);
-        i += len;
-    }
-    return out;
-}
-
-static bool matchAt(const Text& text, size_t pos, const Text& pattern) {
-    if (pos + pattern.size() > text.size()) {
-        return false;
-    }
-    for (size_t i = 0; i < pattern.size(); ++i) {
-        if (toGreekLower(text[pos + i]) != pattern[i]) {
-            return false;
-        }
-    }
-    return true;
-}
-} // namespace
 
 hellasLatin::hellasLatin(std::string input)
     : transforml(input) {
@@ -188,96 +15,109 @@ hellasLatin::hellasLatin(std::string input)
 }
 
 void hellasLatin::transform() {
-    static const struct Rule {
-        Text pattern;
-        Text replacement;
-    } rules[] = {
-        {{0x03BC, 0x03C0, 0x03C1}, {0x0062, 0x0072}},
-        {{0x03BD, 0x03C4, 0x03C1}, {0x0064, 0x0072}},
-        {{0x03B3, 0x03BA, 0x03C1}, {0x0067, 0x0072}},
-        {{0x03BF, 0x03C5}, {0x006F, 0x0075}},
-        {{0x03B1, 0x03C5}, {0x0061, 0x0075}},
-        {{0x03B5, 0x03C5}, {0x0065, 0x0075}},
-        {{0x03B7, 0x03C5}, {0x0113, 0x0075}},
-        {{0x03B3, 0x03B3}, {0x006E, 0x0067}},
-        {{0x03B3, 0x03C7}, {0x006E, 0x0078}},
-        {{0x03C3, 0x03C7}, {0x0161}},
-        {{0x03C4, 0x03C3}, {0x0063}},
-        {{0x03C4, 0x03B6}, {0x0064, 0x007A}},
-        {{0x03BC, 0x03C0}, {0x006D, 0x0062}},
-        {{0x03BD, 0x03C4}, {0x006E, 0x0064}},
-        {{0x03B3, 0x03BA}, {0x006E, 0x0067}},
-        {{0x03B1}, {0x0061}},
-        {{0x03B2}, {0x0062}},
-        {{0x03B3}, {0x0067}},
-        {{0x03B4}, {0x0064}},
-        {{0x03B5}, {0x0065}},
-        {{0x03B6}, {0x007A}},
-        {{0x03B7}, {0x0113}},
-        {{0x03B8}, {0x0074, 0x0068}},
-        {{0x03B9}, {0x0069}},
-        {{0x03BA}, {0x006B}},
-        {{0x03BB}, {0x006C}},
-        {{0x03BC}, {0x006D}},
-        {{0x03BD}, {0x006E}},
-        {{0x03BE}, {0x006B, 0x0073}},
-        {{0x03BF}, {0x006F}},
-        {{0x03C0}, {0x0070}},
-        {{0x03C1}, {0x0072}},
-        {{0x03C3}, {0x0073}},
-        {{0x03C2}, {0x0073}},
-        {{0x03C4}, {0x0074}},
-        {{0x03C5}, {0x0079}},
-        {{0x03C6}, {0x0070, 0x0068}},
-        {{0x03C7}, {0x0078}},
-        {{0x03C8}, {0x0070, 0x0073}},
-        {{0x03C9}, {0x014D}},
-        {{0x0391}, {0x0061}},
-        {{0x0392}, {0x0062}},
-        {{0x0393}, {0x0067}},
-        {{0x0394}, {0x0064}},
-        {{0x0395}, {0x0065}},
-        {{0x0396}, {0x007A}},
-        {{0x0397}, {0x0113}},
-        {{0x0398}, {0x0074, 0x0068}},
-        {{0x0399}, {0x0069}},
-        {{0x039A}, {0x006B}},
-        {{0x039B}, {0x006C}},
-        {{0x039C}, {0x006D}},
-        {{0x039D}, {0x006E}},
-        {{0x039E}, {0x006B, 0x0073}},
-        {{0x039F}, {0x006F}},
-        {{0x03A0}, {0x0070}},
-        {{0x03A1}, {0x0072}},
-        {{0x03A3}, {0x0073}},
-        {{0x03A4}, {0x0074}},
-        {{0x03A5}, {0x0079}},
-        {{0x03A6}, {0x0070, 0x0068}},
-        {{0x03A7}, {0x0078}},
-        {{0x03A8}, {0x0070, 0x0073}},
-        {{0x03A9}, {0x014D}}
-    };
+    std::string s = this->input;
 
-    Text input = decodeUtf8(this->input);
-    Text output;
-    for (size_t i = 0; i < input.size();) {
-        bool matched = false;
-        for (const auto& rule : rules) {
-            if (matchAt(input, i, rule.pattern)) {
-                CaseStyle style = detectCase(input, i, rule.pattern.size());
-                Text replacement = applyCase(rule.replacement, style);
-                output.insert(output.end(), replacement.begin(), replacement.end());
-                i += rule.pattern.size();
-                matched = true;
-                break;
-            }
-        }
-        if (!matched) {
-            output.push_back(input[i]);
-            ++i;
-        }
-    }
-    this->output = encodeUtf8(output);
+    // 三字母组合
+    replaceAll(s, "\xCE\xBC\xCF\x80\xCF\x81", "br");    // μπρ → br
+    replaceAll(s, "\xCD\x9C\xCF\x80\xCF\x81", "Br");    // ΜΠΡ → Br
+    replaceAll(s, "\xCE\xBD\xCF\x84\xCF\x81", "dr");    // ντρ → dr
+    replaceAll(s, "\xCD\x9D\xCF\x84\xCF\x81", "Dr");    // ΝΤΡ → Dr
+    replaceAll(s, "\xCE\xB3\xCE\xBA\xCF\x81", "gr");    // γκρ → gr
+    replaceAll(s, "\xCD\x93\xCE\xBA\xCF\x81", "Gr");    // ΓΚΡ → Gr
+    // 双字母组合
+    replaceAll(s, "\xCE\xBF\xCF\x85", "ou");            // ου → ou
+    replaceAll(s, "\xCE\x9F\xCE\xA5", "Ou");            // ΟΥ → Ou
+    replaceAll(s, "\xCE\xB1\xCF\x85", "au");            // αυ → au
+    replaceAll(s, "\xCE\x91\xCE\xA5", "Au");            // ΑΥ → Au
+    replaceAll(s, "\xCE\xB5\xCF\x85", "eu");            // ευ → eu
+    replaceAll(s, "\xCE\x95\xCE\xA5", "Eu");            // ΕΥ → Eu
+    replaceAll(s, "\xCE\xB7\xCF\x85", "\xC4\x93u");     // ηυ → ēu
+    replaceAll(s, "\xCE\x97\xCE\xA5", "\xC4\x92u");     // ΗΥ → Ēu
+    replaceAll(s, "\xCE\xB3\xCE\xB3", "ng");            // γγ → ng
+    replaceAll(s, "\xCE\x93\xCE\x93", "Ng");            // ΓΓ → Ng
+    replaceAll(s, "\xCE\xB3\xCF\x87", "nx");            // γχ → nx
+    replaceAll(s, "\xCE\x93\xCE\xA7", "Nx");            // ΓΧ → Nx
+    replaceAll(s, "\xCF\x83\xCF\x87", "\xC5\xA1");      // σχ → š
+    replaceAll(s, "\xCE\xA3\xCE\xA7", "\xC5\xA0");      // ΣΧ → Š
+    replaceAll(s, "\xCF\x84\xCF\x83", "c");             // τσ → c
+    replaceAll(s, "\xCE\xA4\xCE\xA3", "C");             // ΤΣ → C
+    replaceAll(s, "\xCF\x84\xCE\xB6", "dz");            // τζ → dz
+    replaceAll(s, "\xCE\xA4\xCE\x96", "Dz");            // ΤΖ → Dz
+    replaceAll(s, "\xCE\xBC\xCF\x80", "mb");            // μπ → mb
+    replaceAll(s, "\xCE\x9C\xCE\xA0", "Mb");            // ΜΠ → Mb
+    replaceAll(s, "\xCE\xBD\xCF\x84", "nd");            // ντ → nd
+    replaceAll(s, "\xCE\x9D\xCE\xA4", "Nd");            // ΝΤ → Nd
+    replaceAll(s, "\xCE\xB3\xCE\xBA", "ng");            // γκ → ng
+    replaceAll(s, "\xCE\x93\xCE\x9A", "Ng");            // ΓΚ → Ng
+    // 单字母（小写）
+    replaceAll(s, "\xCE\xB1", "a");                   // α
+    replaceAll(s, "\xCE\xB2", "b");                   // β
+    replaceAll(s, "\xCE\xB3", "g");                   // γ
+    replaceAll(s, "\xCE\xB4", "d");                   // δ
+    replaceAll(s, "\xCE\xB5", "e");                   // ε
+    replaceAll(s, "\xCE\xB6", "z");                   // ζ
+    replaceAll(s, "\xCE\xB7", "\xC4\x93");            // η → ē
+    replaceAll(s, "\xCE\xB8", "th");                  // θ
+    replaceAll(s, "\xCE\xB9", "i");                   // ι
+    replaceAll(s, "\xCE\xBA", "k");                   // κ
+    replaceAll(s, "\xCE\xBB", "l");                   // λ
+    replaceAll(s, "\xCE\xBC", "m");                   // μ
+    replaceAll(s, "\xCE\xBD", "n");                   // ν
+    replaceAll(s, "\xCE\xBE", "ks");                  // ξ
+    replaceAll(s, "\xCE\xBF", "o");                   // ο
+    replaceAll(s, "\xCF\x80", "p");                   // π
+    replaceAll(s, "\xCF\x81", "r");                   // ρ
+    replaceAll(s, "\xCF\x82", "s");                   // ς
+    replaceAll(s, "\xCF\x83", "s");                   // σ
+    replaceAll(s, "\xCF\x84", "t");                   // τ
+    replaceAll(s, "\xCF\x85", "y");                   // υ
+    replaceAll(s, "\xCF\x86", "ph");                  // φ
+    replaceAll(s, "\xCF\x87", "x");                   // χ
+    replaceAll(s, "\xCF\x88", "ps");                  // ψ
+    replaceAll(s, "\xCF\x89", "\xC5\x8D");            // ω → ō
+    // 单字母（大写）
+    replaceAll(s, "\xCE\x91", "A");    // Α → A
+    replaceAll(s, "\xCE\x92", "B");    // Β → B
+    replaceAll(s, "\xCE\x93", "G");    // Γ → G
+    replaceAll(s, "\xCE\x94", "D");    // Δ → D
+    replaceAll(s, "\xCE\x95", "E");    // Ε → E
+    replaceAll(s, "\xCE\x96", "Z");    // Ζ → Z
+    replaceAll(s, "\xCE\x97", "\xC4\x92"); // Η → Ē
+    replaceAll(s, "\xCE\x98", "Th");   // Θ → Th
+    replaceAll(s, "\xCE\x99", "I");    // Ι → I
+    replaceAll(s, "\xCE\x9A", "K");    // Κ → K
+    replaceAll(s, "\xCE\x9B", "L");    // Λ → L
+    replaceAll(s, "\xCE\x9C", "M");    // Μ → M
+    replaceAll(s, "\xCE\x9D", "N");    // Ν → N
+    replaceAll(s, "\xCE\x9E", "Ks");   // Ξ → Ks
+    replaceAll(s, "\xCE\x9F", "O");    // Ο → O
+    replaceAll(s, "\xCE\xA0", "P");    // Π → P
+    replaceAll(s, "\xCE\xA1", "R");    // Ρ → R
+    replaceAll(s, "\xCE\xA3", "S");    // Σ → S
+    replaceAll(s, "\xCE\xA4", "T");    // Τ → T
+    replaceAll(s, "\xCE\xA5", "Y");    // Υ → Y
+    replaceAll(s, "\xCE\xA6", "Ph");   // Φ → Ph
+    replaceAll(s, "\xCE\xA7", "X");    // Χ → X
+    replaceAll(s, "\xCE\xA8", "Ps");   // Ψ → Ps
+    replaceAll(s, "\xCE\xA9", "\xC5\x8C"); // Ω → Ō
+    // 大写带重音
+    replaceAll(s, "\xCE\x86", "\xC1");   // Ά → Á
+    replaceAll(s, "\xCE\x88", "\xC9");   // Έ → É
+    replaceAll(s, "\xCE\x89", "\xC7\xBD"); // Ή → Ǽ
+    replaceAll(s, "\xCE\x8A", "\xCD");   // Ί → Í
+    replaceAll(s, "\xCE\x8C", "\xD3");   // Ό → Ó
+    replaceAll(s, "\xCE\x8E", "\xDD");   // Ύ → Ý
+    replaceAll(s, "\xCE\x8F", "\xD5\x92"); // Ώ → Ṓ
+    // 小写带重音
+    replaceAll(s, "\xCE\xAC", "\xE1");   // ά → á
+    replaceAll(s, "\xCE\xAD", "\xE9");   // έ → é
+    replaceAll(s, "\xCE\xAE", "\xE7\xBD"); // ή → ǽ
+    replaceAll(s, "\xCE\xAF", "\xED");   // ί → í
+    replaceAll(s, "\xCF\x8C", "\xF3");   // ό → ó
+    replaceAll(s, "\xCF\x8D", "\xFD");   // ύ → ý
+    replaceAll(s, "\xCF\x8E", "\xF5\x92"); // ώ → ṓ
+
+    this->output = s;
 }
 
 void hellasLatin::outputl() {
