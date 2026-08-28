@@ -3,7 +3,7 @@
 transforml::transforml(std::string input){
     this->input = input;
     this->output = "";
-    this->type = transformType::default;
+    this->type = transformType::normal;
 }
 
 void transforml::outputl(){

@@ -4,7 +4,7 @@
 #include "../common/Common.h"
 
 enum class transformType{
-    default,
+    normal,
     hellasLatin,
     jugoslav
 };
