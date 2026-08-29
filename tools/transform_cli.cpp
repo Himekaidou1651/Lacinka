@@ -7,6 +7,7 @@
 #include "../core/transform/choseon.h"
 #include "../core/transform/hellas.h"
 #include "../core/transform/jugoslav.h"
+#include "../core/transform/ukrajina.h"
 
 static int parseMode(const char* value) {
     if (!value) {
@@ -37,6 +38,11 @@ static std::string transformText(const std::string& input, int mode) {
     }
     if (mode == 4) {
         bielaNewLatin t(input);
+        t.transform();
+        return t.getOutput();
+    }
+    if (mode == 5) {
+        ukrajinaLatin t(input);
         t.transform();
         return t.getOutput();
     }
