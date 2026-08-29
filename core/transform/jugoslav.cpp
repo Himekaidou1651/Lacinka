@@ -11,7 +11,7 @@ static void replaceAll(std::string& s, const std::string& from, const std::strin
 
 serbiaLatin::serbiaLatin(std::string input)
     : transforml(input) {
-    this->type = transformType::jugoslav;
+    this->type = transformType::jugoslavLatin;
 }
 
 void serbiaLatin::transform() {

@@ -3,17 +3,6 @@
 
 #include "../common/Common.h"
 
-enum class transformType{
-    normal,
-    hellasLatin,
-    jugoslav,
-    eonmonLatin,
-    bielaOldLatin,
-    bielaNewLatin,
-    ukrajinaLatin,
-    latinOldLatin,
-};
-
 class transforml{
 protected:
     std::string input;
