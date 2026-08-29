@@ -14,14 +14,14 @@ function createWindow() {
     frame: false,
     title: "Lacinka",
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
+      preload: path.join(__dirname, "frontend", "preload.js"),
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true
     }
   });
 
-  mainWindow.loadFile(path.join(__dirname, "index.html"));
+  mainWindow.loadFile(path.join(__dirname, "frontend", "index.html"));
   mainWindow.on("closed", () => {
     mainWindow = null;
   });

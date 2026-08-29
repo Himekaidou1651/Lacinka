@@ -16,10 +16,7 @@
     "asar": true,
     "files": [
       "main.js",
-      "preload.js",
-      "renderer.js",
-      "index.html",
-      "style.css",
+      "frontend/**/*",
       "package.json"
     ],
     "extraResources": [

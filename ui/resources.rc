@@ -1,4 +1,0 @@
-#include "resource.h"
-
-IDR_LACINKA_UI_JS RCDATA "script/app.js"
-IDI_LACINKA ICON "../assets/icons/lacinka.ico"
