@@ -21,6 +21,7 @@ It takes text from the app UI or stdin and converts it into Latin-script variant
 | 3 | Belarusian | Łacinka |
 | 4 | Belarusian | 2007 Latin |
 | 5 | Ukrainian | Latin |
+| 6 | Latina | Old Latin |
 
 ## How It Works
 

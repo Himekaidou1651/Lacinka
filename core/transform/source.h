@@ -10,7 +10,8 @@ enum class transformType{
     eonmonLatin,
     bielaOldLatin,
     bielaNewLatin,
-    ukrajinaLatin
+    ukrajinaLatin,
+    latinOldLatin,
 };
 
 class transforml{
