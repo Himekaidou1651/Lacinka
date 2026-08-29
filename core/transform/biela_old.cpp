@@ -1,4 +1,4 @@
-//Bielarus Lacinka to Latin
+//Bielarus Lacinka
 #include "biela_old.h"
 
 static void replaceAll(std::string& s, const std::string& from, const std::string& to) {
@@ -26,8 +26,6 @@ void bielaOldLatin::transform() {
     replaceAll(s, "\xD0\xBD\xD1\x8C", "\xC5\x84");   // нь → ń
     replaceAll(s, "\xD0\x9B\xD1\x8C", "L");          // Ль → L
     replaceAll(s, "\xD0\xBB\xD1\x8C", "l");          // ль → l
-    replaceAll(s, "\xD0\xA2\xD1\x8C", "\xC4\x86");   // Ть → Ć
-    replaceAll(s, "\xD1\x82\xD1\x8C", "\xC4\x87");   // ть → ć
     replaceAll(s, "\xD0\xA6\xD1\x8C", "\xC4\x86");   // Ць → Ć
     replaceAll(s, "\xD1\x86\xD1\x8C", "\xC4\x87");   // ць → ć
     replaceAll(s, "\xD0\xA0\xD1\x8C", "Rz");         // Рь → Rz

@@ -9,7 +9,8 @@ enum class transformType{
     jugoslav,
     eonmonLatin,
     bielaOldLatin,
-    bielaNewLatin
+    bielaNewLatin,
+    ukrajinaLatin
 };
 
 class transforml{

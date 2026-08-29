@@ -1,4 +1,4 @@
-//Bielarus new (2007) to Latin
+//Bielarus 2007 Latin
 #pragma once
 
 #include "source.h"

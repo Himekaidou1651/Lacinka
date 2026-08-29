@@ -1,5 +1,5 @@
-//Bielarus 2007 Latin
-#include "biela_new.h"
+//Ukrajina Lacinka
+#include "ukrajina.h"
 
 static void replaceAll(std::string& s, const std::string& from, const std::string& to) {
     size_t pos = 0;
@@ -9,12 +9,12 @@ static void replaceAll(std::string& s, const std::string& from, const std::strin
     }
 }
 
-bielaNewLatin::bielaNewLatin(std::string input)
+ukrajinaLatin::ukrajinaLatin(std::string input)
     : transforml(input) {
-    this->type = transformType::bielaNewLatin;
+    this->type = transformType::ukrajinaLatin;
 }
 
-void bielaNewLatin::transform() {
+void ukrajinaLatin::transform() {
     std::string s = this->input;
 
     // 1) 辅音 + ь 组合（先于所有单字母）
@@ -26,6 +26,8 @@ void bielaNewLatin::transform() {
     replaceAll(s, "\xD0\xBD\xD1\x8C", "\xC5\x84");   // нь → ń
     replaceAll(s, "\xD0\x9B\xD1\x8C", "L");          // Ль → L
     replaceAll(s, "\xD0\xBB\xD1\x8C", "l");          // ль → l
+    replaceAll(s, "\xD0\xA2\xD1\x8C", "\xC4\x86");   // Ть → Ć
+    replaceAll(s, "\xD1\x82\xD1\x8C", "\xC4\x87");   // ть → ć
     replaceAll(s, "\xD0\xA6\xD1\x8C", "\xC4\x86");   // Ць → Ć
     replaceAll(s, "\xD1\x86\xD1\x8C", "\xC4\x87");   // ць → ć
     replaceAll(s, "\xD0\xA0\xD1\x8C", "Rz");         // Рь → Rz
@@ -53,11 +55,11 @@ void bielaNewLatin::transform() {
     // 4) 其余单字母（小写）
     replaceAll(s, "\xD0\xB0", "a");     // а
     replaceAll(s, "\xD0\xB1", "b");     // б
-    replaceAll(s, "\xD0\xB2", "v");     // в → v（新式）
+    replaceAll(s, "\xD0\xB2", "w");     // в → w
     replaceAll(s, "\xD0\xB3", "h");     // г
     replaceAll(s, "\xD2\x91", "g");     // ґ
     replaceAll(s, "\xD0\xB4", "d");     // д
-    replaceAll(s, "\xD0\xB6", "\xC5\xBE"); // ж → ž（新式）
+    replaceAll(s, "\xD0\xB6", "\xC5\xBC"); // ж → ż
     replaceAll(s, "\xD0\xB7", "z");     // з
     replaceAll(s, "\xD1\x96", "i");     // і
     replaceAll(s, "\xD0\xB9", "j");     // й
@@ -71,23 +73,22 @@ void bielaNewLatin::transform() {
     replaceAll(s, "\xD1\x81", "s");     // с
     replaceAll(s, "\xD1\x82", "t");     // т
     replaceAll(s, "\xD1\x83", "u");     // у
-    replaceAll(s, "\xD1\x9E", "\xC5\xAD"); // ў → ŭ
     replaceAll(s, "\xD1\x84", "f");     // ф
     replaceAll(s, "\xD1\x85", "ch");    // х
     replaceAll(s, "\xD1\x86", "c");     // ц
-    replaceAll(s, "\xD1\x87", "\xC4\x8D"); // ч → č（新式）
-    replaceAll(s, "\xD1\x88", "\xC5\xA1"); // ш → š（新式）
+    replaceAll(s, "\xD1\x87", "cz");    // Ч → cz
+    replaceAll(s, "\xD1\x88", "sz");    // Ш → sz
     replaceAll(s, "\xD1\x8B", "y");     // ы
     replaceAll(s, "\xD1\x8D", "e");     // э
 
     // 5) 其余单字母（大写）
     replaceAll(s, "\xD0\x90", "A");     // А
     replaceAll(s, "\xD0\x91", "B");     // Б
-    replaceAll(s, "\xD0\x92", "V");     // В → V（新式）
+    replaceAll(s, "\xD0\x92", "W");     // В → W
     replaceAll(s, "\xD0\x93", "H");     // Г
     replaceAll(s, "\xD2\x90", "G");     // Ґ
     replaceAll(s, "\xD0\x94", "D");     // Д
-    replaceAll(s, "\xD0\x96", "\xC5\xBD"); // Ж → Ž（新式）
+    replaceAll(s, "\xD0\x96", "\xC5\xBB"); // Ж → Ż
     replaceAll(s, "\xD0\x97", "Z");     // З
     replaceAll(s, "\xD0\x86", "I");     // І
     replaceAll(s, "\xD0\x99", "J");     // Й
@@ -101,12 +102,11 @@ void bielaNewLatin::transform() {
     replaceAll(s, "\xD0\xA1", "S");     // С
     replaceAll(s, "\xD0\xA2", "T");     // Т
     replaceAll(s, "\xD0\xA3", "U");     // У
-    replaceAll(s, "\xD0\x8E", "\xC5\xAC"); // Ў → Ŭ
     replaceAll(s, "\xD0\xA4", "F");     // Ф
     replaceAll(s, "\xD0\xA5", "Ch");    // Х
     replaceAll(s, "\xD0\xA6", "C");     // Ц
-    replaceAll(s, "\xD0\xA7", "\xC4\x8C"); // Ч → Č（新式）
-    replaceAll(s, "\xD0\xA8", "\xC5\xA0"); // Ш → Š（新式）
+    replaceAll(s, "\xD0\xA7", "Cz");    // Ч → Cz
+    replaceAll(s, "\xD0\xA8", "Sz");    // Ш → Sz
     replaceAll(s, "\xD0\xAB", "Y");     // Ы
     replaceAll(s, "\xD0\xAD", "E");     // Э
 
@@ -208,7 +208,7 @@ void bielaNewLatin::transform() {
     this->output = s;
 }
 
-void bielaNewLatin::outputl() {
+void ukrajinaLatin::outputl() {
     this->transform();
     std::cout << this->output << std::endl;
 }

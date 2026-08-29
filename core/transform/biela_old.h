@@ -1,4 +1,4 @@
-//Bielarus old Lacinka to Latin
+//Bielarus Lacinka
 #pragma once
 
 #include "source.h"
