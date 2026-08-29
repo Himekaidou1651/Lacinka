@@ -1,5 +1,7 @@
 # Łacinka
 
+[汉语](./README-zhCN.md)
+
 Łacinka is a desktop transliteration tool built with Electron and a native C++ conversion core.
 It takes text from the app UI or stdin and converts it into Latin-script variants for several languages.
 

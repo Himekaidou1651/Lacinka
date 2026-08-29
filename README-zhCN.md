@@ -1,5 +1,7 @@
 # Łacinka
 
+[English](./README.md)
+
 Łacinka 是一个桌面转写工具，基于 Electron + C++ 原生转换核心。
 它可以通过应用界面或标准输入接收文本，并转换为多种语言的拉丁字母写法。
 
