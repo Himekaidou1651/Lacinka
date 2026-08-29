@@ -14,6 +14,7 @@ pushd "%ROOT_DIR%"
   core/transform/choseon.cpp ^
   core/transform/biela_old.cpp ^
   core/transform/biela_new.cpp ^
+  core/transform/ukrajina.cpp ^
   -o transform_cli.exe
 if errorlevel 1 goto :fail
 
