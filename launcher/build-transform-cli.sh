@@ -11,4 +11,6 @@ g++ -std=c++17 \
   core/transform/hellas.cpp \
   core/transform/jugoslav.cpp \
   core/transform/choseon.cpp \
+  core/transform/biela_old.cpp \
+  core/transform/biela_new.cpp \
   -o transform_cli

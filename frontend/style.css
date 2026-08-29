@@ -106,9 +106,11 @@ button {
   display: grid;
   place-items: center;
   border-radius: var(--radius-button);
-  background: linear-gradient(160deg, var(--primary), #38a169);
-  color: #fff;
   font-weight: 700;
+  background-image: url('../assets/icons/lacinka.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .brand-title {
@@ -357,6 +359,14 @@ textarea:focus {
 
 .mode-card[data-accent="rose"] {
   --accent: #be4b73;
+}
+
+.mode-card[data-accent="amber"] {
+  --accent: #d69e2e;
+}
+
+.mode-card[data-accent="violet"] {
+  --accent: #805ad5;
 }
 
 .mode-card:hover {

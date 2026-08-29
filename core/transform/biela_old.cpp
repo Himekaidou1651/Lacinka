@@ -1,5 +1,5 @@
 //Bielarus Lacinka to Latin
-#include "biela_new.h"
+#include "biela_old.h"
 
 static void replaceAll(std::string& s, const std::string& from, const std::string& to) {
     size_t pos = 0;
@@ -9,12 +9,12 @@ static void replaceAll(std::string& s, const std::string& from, const std::strin
     }
 }
 
-bielaNewLatin::bielaNewLatin(std::string input)
+bielaOldLatin::bielaOldLatin(std::string input)
     : transforml(input) {
-    this->type = transformType::bielaNewLatin;
+    this->type = transformType::bielaOldLatin;
 }
 
-void bielaNewLatin::transform() {
+void bielaOldLatin::transform() {
     std::string s = this->input;
 
     // 1) 辅音 + ь 组合（先于所有单字母）
@@ -210,7 +210,7 @@ void bielaNewLatin::transform() {
     this->output = s;
 }
 
-void bielaNewLatin::outputl() {
+void bielaOldLatin::outputl() {
     this->transform();
     std::cout << this->output << std::endl;
 }

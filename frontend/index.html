@@ -11,10 +11,10 @@
   <div class="window" data-theme="light">
     <header class="titlebar">
       <div class="brand">
-        <div class="brand-mark">L</div>
+        <div class="brand-mark"></div>
         <div class="brand-text">
           <div class="brand-title">Łacinka</div>
-          <div class="brand-subtitle">希腊希腊/塞克西里尔/朝鲜谚文</div>
+          <div class="brand-subtitle">希腊/塞克西里尔/谚文/白罗斯西里尔</div>
         </div>
       </div>
 
@@ -47,9 +47,11 @@
         <textarea id="input-text" spellcheck="false" placeholder="在此输入待转写内容..."></textarea>
         <div class="meter" aria-hidden="true"><span id="input-meter"></span></div>
         <div class="chips">
-          <button class="chip" type="button" data-sample="0">希腊语希腊字母示例</button>
-          <button class="chip" type="button" data-sample="1">塞克语西里尔字母示例</button>
+          <button class="chip" type="button" data-sample="0">希腊语希腊示例</button>
+          <button class="chip" type="button" data-sample="1">塞克语西里尔示例</button>
           <button class="chip" type="button" data-sample="2">朝鲜语谚文示例</button>
+          <button class="chip" type="button" data-sample="3">白罗斯语西里尔示例</button>
+          <button class="chip" type="button" data-sample="4">白罗斯语西里尔示例</button>
         </div>
       </section>
 
@@ -66,6 +68,14 @@
           <button class="mode-card" type="button" data-mode="2" data-accent="rose">
             <span class="mode-name">谚文->拉丁</span>
             <span class="mode-desc">谚文罗马音</span>
+          </button>
+          <button class="mode-card" type="button" data-mode="3" data-accent="amber">
+            <span class="mode-name">白罗斯西里尔->拉丁(Łacinka)</span>
+            <span class="mode-desc">西里尔字母转写</span>
+          </button>
+          <button class="mode-card" type="button" data-mode="4" data-accent="violet">
+            <span class="mode-name">白罗斯西里尔->拉丁(2007)</span>
+            <span class="mode-desc">西里尔字母转写</span>
           </button>
         </div>
 

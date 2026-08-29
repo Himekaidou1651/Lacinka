@@ -2,6 +2,8 @@
 #include <iterator>
 #include <string>
 
+#include "../core/transform/biela_old.h"
+#include "../core/transform/biela_new.h"
 #include "../core/transform/choseon.h"
 #include "../core/transform/hellas.h"
 #include "../core/transform/jugoslav.h"
@@ -25,6 +27,16 @@ static std::string transformText(const std::string& input, int mode) {
     }
     if (mode == 2) {
         choseonLatin t(input);
+        t.transform();
+        return t.getOutput();
+    }
+    if (mode == 3) {
+        bielaOldLatin t(input);
+        t.transform();
+        return t.getOutput();
+    }
+    if (mode == 4) {
+        bielaNewLatin t(input);
         t.transform();
         return t.getOutput();
     }
