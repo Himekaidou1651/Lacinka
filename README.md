@@ -3,13 +3,20 @@
 [汉语](./README-zhCN.md)
 
 Łacinka is a desktop transliteration tool built with Electron and a native C++ conversion core.
-It takes text from the app UI or stdin and converts it into Latin-script variants for several languages.
+It converts text into Latin-script variants for several languages, either through the GUI or from standard input via the command line.
 
 ## Features
 
-- To Latin
-- Electron UI with samples, counters, swap, copy, download, theme toggle, and always-on-top
-- Native CLI converter reused by the desktop app
+- 8 transliteration modes (Greek, Serbo-Croatian, Choseoneo, Belarusian, Ukrainian, Latin, Russian)
+- Frameless Electron window with a custom title bar (minimize / maximize / close)
+- Input panel with live character count and a length meter
+- Mode-aware "Insert sample" button — each mode inserts a different sample text
+- Swap input ↔ output, copy output to clipboard, download result as `.txt` or `.json`
+- Light/dark theme toggle and always-on-top toggle
+- Chinese/English interface switch (i18n)
+- Status bar showing current status and last-run time; error banner and toast notifications
+- Keyboard shortcuts: `Ctrl+Enter` runs the conversion, `Esc` closes the download menu
+- Native CLI converter (`transform_cli`) reused by the desktop app
 
 ## Conversion Modes
 
@@ -21,7 +28,7 @@ It takes text from the app UI or stdin and converts it into Latin-script variant
 | 3 | Belarusian | Łacinka |
 | 4 | Belarusian | 2007 Latin |
 | 5 | Ukrainian | Łacinka |
-| 6 | Latina | Old Latin |
+| 6 | Latina | Ecclesiasticum |
 | 7 | Russian | Łacinka |
 
 ## How It Works
@@ -35,15 +42,20 @@ Start `Lacinka.exe`.
 
 ## Project Layout
 
-- `main.js` - Electron main process
-- `electron-start.js` - local launcher for development
+- `main.js` - Electron main process (window management, IPC, spawns `transform_cli`)
+- `electron-start.js` - local development launcher
 - `frontend/` - renderer UI
-- `core/transform/` - transliteration implementations
+  - `index.html`, `style.css`, `renderer.js` - interface and behavior
+  - `preload.js` - context bridge (window controls + transform)
+  - `i18n/` - zh-CN and en language dictionaries
+- `core/common/Common.js` - shared sample texts and config (char limits, toast duration)
+- `core/transform/` - transliteration implementations (C++)
 - `tools/transform_cli.cpp` - native command-line entry
 - `launcher/` - build scripts
 - `assets/icons/` - app icons
 
 ## Notes
 
-- The UI supports sample text and exporting results as `.txt` or `.json`
-- `Ctrl+Enter` triggers conversion in the desktop app
+- The character counter turns to a warning past 1000 characters and marks the count as over-limit past 5000
+- The sample button inserts mode-specific sample text
+- Export formats: plain text `.txt` and `.json` (the JSON file includes mode, input and output)
