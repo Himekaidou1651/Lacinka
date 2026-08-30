@@ -4,8 +4,6 @@ var TEXTS = {
   statusDone: "转写完成",
   statusCopied: "已复制输出",
   statusDownloaded: "已下载输出",
-  pillReady: "就绪",
-  pillWorking: "工作中",
   runButton: "转写",
   processingButton: "处理中...",
   emptyOutput: "转写结果将在此显示",
@@ -56,9 +54,8 @@ function showToast(message) {
   }, 1800);
 }
 
-function setStatus(status, pill) {
+function setStatus(status) {
   $("#status-text").textContent = status;
-  $("#pill").textContent = pill || TEXTS.pillReady;
 }
 
 function setError(message) {
@@ -94,14 +91,14 @@ function setBusy(flag, nextStatus) {
   $("#run-transform").disabled = state.busy;
   $("#run-transform").classList.toggle("busy", state.busy);
   $("#run-label").textContent = state.busy ? TEXTS.processingButton : TEXTS.runButton;
-  setStatus(state.busy ? TEXTS.statusProcessing : nextStatus || TEXTS.statusDone, state.busy ? TEXTS.pillWorking : TEXTS.pillReady);
+  setStatus(state.busy ? TEXTS.statusProcessing : nextStatus || TEXTS.statusDone);
 }
 
 function runTransform() {
   state.input = $("#input-text").value;
   if (!state.input.trim()) {
     setError(TEXTS.emptyWarning);
-    setStatus(TEXTS.statusWaiting, TEXTS.pillReady);
+    setStatus(TEXTS.statusWaiting);
     showToast(TEXTS.emptyWarning);
     return;
   }
@@ -125,7 +122,7 @@ function clearAll() {
   state.input = "";
   state.output = "";
   setError("");
-  setStatus(TEXTS.statusWaiting, TEXTS.pillReady);
+  setStatus(TEXTS.statusWaiting);
   $("#last-run").textContent = TEXTS.lastRunPrefix + "--";
   renderText();
 }
@@ -144,7 +141,7 @@ function copyOutput() {
     return;
   }
   navigator.clipboard.writeText(state.output).then(function () {
-    setStatus(TEXTS.statusCopied, TEXTS.pillReady);
+    setStatus(TEXTS.statusCopied);
     showToast(TEXTS.statusCopied);
   }).catch(function () {
     showToast("复制失败");
@@ -167,16 +164,17 @@ function downloadOutput(format) {
   link.download = "Lacinka_output." + format;
   link.click();
   URL.revokeObjectURL(url);
-  setStatus(TEXTS.statusDownloaded, TEXTS.pillReady);
+  setStatus(TEXTS.statusDownloaded);
   showToast(TEXTS.statusDownloaded);
 }
 
+function setDownloadMenu(open) {
+  $("#download-options").hidden = !open;
+  $("#download-menu").setAttribute("aria-expanded", String(open));
+}
+
 function toggleDownloadMenu() {
-  var menu = $("#download-options");
-  var button = $("#download-menu");
-  var open = menu.hidden;
-  menu.hidden = !open;
-  button.setAttribute("aria-expanded", String(open));
+  setDownloadMenu($("#download-options").hidden);
 }
 
 function bindEvents() {
@@ -214,17 +212,22 @@ function bindEvents() {
   });
   $all("[data-download]").forEach(function (item) {
     item.addEventListener("click", function () {
-      $("#download-options").hidden = true;
-      $("#download-menu").setAttribute("aria-expanded", "false");
+      setDownloadMenu(false);
       downloadOutput(item.dataset.download);
     });
+  });
+  document.addEventListener("click", function (event) {
+    var wrap = document.querySelector(".menu-wrap");
+    if (wrap && !wrap.contains(event.target)) {
+      setDownloadMenu(false);
+    }
   });
   document.addEventListener("keydown", function (event) {
     if (event.ctrlKey && event.key === "Enter") {
       runTransform();
     }
     if (event.key === "Escape") {
-      $("#download-options").hidden = true;
+      setDownloadMenu(false);
     }
   });
 }
@@ -232,7 +235,7 @@ function bindEvents() {
 function bootstrap() {
   bindEvents();
   setMode("0");
-  setStatus(TEXTS.statusWaiting, TEXTS.pillReady);
+  setStatus(TEXTS.statusWaiting);
   renderText();
 }
 

@@ -20,6 +20,7 @@
   --space-md: 12px;
   --space-lg: 16px;
   --space-xl: 24px;
+  --statusbar-height: 44px;
   --font-family: Arial, "Microsoft YaHei", sans-serif;
   --mono-family: Consolas, "Courier New", monospace;
   --shadow-panel: 0 12px 30px rgba(26, 32, 44, 0.12);
@@ -58,6 +59,7 @@ button {
   width: 100%;
   height: 100%;
   min-height: 0;
+  position: relative;
   display: flex;
   flex-direction: column;
   background: var(--bg);
@@ -549,12 +551,17 @@ textarea:focus {
 }
 
 .error-banner {
-  margin: 0 var(--space-lg) var(--space-md);
+  position: absolute;
+  left: var(--space-lg);
+  right: var(--space-lg);
+  bottom: calc(var(--statusbar-height) + var(--space-md));
+  z-index: 8;
   padding: 10px 14px;
   border-radius: var(--radius-button);
   background: #fff5f5;
   color: var(--danger);
   border: 1px solid #feb2b2;
+  box-shadow: var(--shadow-panel);
 }
 
 .window[data-theme="dark"] .error-banner {
@@ -563,7 +570,7 @@ textarea:focus {
 }
 
 .statusbar {
-  height: 44px;
+  height: var(--statusbar-height);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -572,15 +579,6 @@ textarea:focus {
   border-top: 1px solid var(--border);
   background: var(--surface);
   color: var(--muted);
-}
-
-.pill {
-  padding: 5px 12px;
-  border-radius: 999px;
-  background: var(--success);
-  color: #fff;
-  font-size: 12px;
-  font-weight: 700;
 }
 
 .toast {
