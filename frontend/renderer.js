@@ -12,6 +12,7 @@ var TEXTS = {
 };
 
 var SAMPLES = window.LacinkaCommon.samples;
+var CONFIG = window.LacinkaCommon.config;
 
 var state = {
   mode: "0",
@@ -41,7 +42,7 @@ function formatCount(value) {
 function updateCount(el, value) {
   var n = countText(value);
   el.textContent = formatCount(value);
-  el.dataset.level = n > 5000 ? "danger" : n > 1000 ? "warning" : "normal";
+  el.dataset.level = n > CONFIG.maxChars ? "danger" : n > CONFIG.warningChars ? "warning" : "normal";
 }
 
 function showToast(message) {
@@ -51,7 +52,7 @@ function showToast(message) {
   clearTimeout(state.toastTimer);
   state.toastTimer = setTimeout(function () {
     toast.classList.remove("show");
-  }, 1800);
+  }, CONFIG.toastDurationMs);
 }
 
 function setStatus(status) {
@@ -70,7 +71,7 @@ function renderText() {
   state.input = input.value;
   updateCount($("#input-count"), state.input);
   updateCount($("#output-count"), state.output);
-  $("#input-meter").style.width = Math.min(countText(state.input) / 5000 * 100, 100) + "%";
+  $("#input-meter").style.width = Math.min(countText(state.input) / CONFIG.maxChars * CONFIG.meterMaxPercent, CONFIG.meterMaxPercent) + "%";
   output.textContent = state.output || TEXTS.emptyOutput;
   output.classList.toggle("empty", !state.output);
   output.classList.remove("fade-in");

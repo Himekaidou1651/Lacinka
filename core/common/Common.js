@@ -9,6 +9,12 @@
       "5": "Вона формувалася протягом століть під впливом різних народів, але зберегла свою самобутність. Вишиванка, пісня, мова та кухня – це ті елементи, які об'єднують українців по всьому світу.",
       "6": "Qui autem in amicitia non benevolentiam sed commodum suum quaerit, is verae amicitiae nomen frustra sibi sumit. Nam sicut ignis, nisi alimentis alatur, extinguitur, sic amicitia, nisi mutua benignitate et constantia colitur, paulatim evanescit.",
       "7": "Это город белых ночей, когда небо сливается с водами Невы, и город суровых зим, когда снег укрывает улицы плотным одеялом. Здесь жили и творили Пушкин, Достоевский, Чайковский и Ахматова – каждый из них внёс свою частицу в душу этого города."
+    },
+    config: {
+      maxChars: 5000,
+      warningChars: 1000,
+      meterMaxPercent: 100,
+      toastDurationMs: 1800
     }
   };
 
