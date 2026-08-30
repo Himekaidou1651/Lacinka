@@ -81,7 +81,7 @@ button {
 .titlebar {
   height: 60px;
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) auto minmax(320px, 1fr);
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: var(--space-lg);
   padding: 0 var(--space-lg);
@@ -634,7 +634,7 @@ textarea:focus {
 
 @media (max-width: 1119px) {
   .titlebar {
-    grid-template-columns: minmax(180px, 1fr) auto;
+    grid-template-columns: 1fr auto;
   }
 
   .header-status {
@@ -643,6 +643,7 @@ textarea:focus {
 
   .workspace {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto minmax(0, 1fr);
   }
 
   .control-panel {
@@ -650,12 +651,15 @@ textarea:focus {
     grid-row: 1;
     align-self: stretch;
     grid-template-rows: none;
-    grid-template-columns: 1fr auto auto;
+    grid-template-columns: minmax(0, 1fr) auto auto;
     align-items: center;
+    gap: var(--space-md);
   }
 
   .mode-stack {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-height: 168px;
+    overflow-y: auto;
   }
 }
 
@@ -685,17 +689,28 @@ textarea:focus {
   }
 
   .control-panel {
-    position: sticky;
-    bottom: 0;
-    z-index: 3;
+    position: static;
+    z-index: auto;
     grid-column: auto;
     grid-row: auto;
     grid-template-rows: none;
     grid-template-columns: 1fr;
+    gap: var(--space-md);
   }
 
   .mode-stack {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: var(--space-sm);
+    padding-bottom: var(--space-xs);
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .mode-card {
+    flex: 0 0 auto;
+    width: 190px;
+    min-height: 56px;
   }
 
   textarea,

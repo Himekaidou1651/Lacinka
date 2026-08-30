@@ -192,7 +192,7 @@ function bindEvents() {
   $("#theme-toggle").addEventListener("click", function () {
     state.theme = state.theme === "light" ? "dark" : "light";
     $(".window").dataset.theme = state.theme;
-    $("#theme-toggle").textContent = state.theme === "light" ? "深色" : "浅色";
+    $("#theme-toggle").textContent = state.theme === "light" ? "◐" : "◑";
   });
   $("#input-text").addEventListener("input", renderText);
   $("#run-transform").addEventListener("click", runTransform);
