@@ -322,9 +322,30 @@ textarea:focus {
 
 .chips {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  align-items: center;
   gap: var(--space-sm);
-  padding: var(--space-lg);
+  height: 44px;
+  padding: 0 var(--space-lg);
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.chips::-webkit-scrollbar {
+  height: 6px;
+}
+
+.chips::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
+}
+
+.chips::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chip {
+  flex: 0 0 auto;
 }
 
 .control-panel {
@@ -521,8 +542,10 @@ textarea:focus {
 
 .panel-foot {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
-  padding: 0 var(--space-lg) var(--space-lg);
+  height: 49px;
+  padding: 0 var(--space-lg);
 }
 
 .error-banner {
