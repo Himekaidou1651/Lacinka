@@ -1,15 +1,10 @@
-var TEXTS = {
-  statusWaiting: "等待输入",
-  statusProcessing: "正在转写",
-  statusDone: "转写完成",
-  statusCopied: "已复制输出",
-  statusDownloaded: "已下载输出",
-  runButton: "转写",
-  processingButton: "处理中...",
-  emptyOutput: "转写结果将在此显示",
-  emptyWarning: "请先输入待转写内容",
-  lastRunPrefix: "上次运行: "
-};
+var I18N = window.LacinkaI18n;
+var currentLocale = "zh-CN";
+
+function t(key) {
+  var dict = I18N[currentLocale] || I18N["zh-CN"] || {};
+  return Object.prototype.hasOwnProperty.call(dict, key) ? dict[key] : key;
+}
 
 var SAMPLES = window.LacinkaCommon.samples;
 var CONFIG = window.LacinkaCommon.config;
@@ -20,7 +15,9 @@ var state = {
   output: "",
   busy: false,
   theme: "light",
-  toastTimer: 0
+  toastTimer: 0,
+  statusKey: "statusWaiting",
+  lastRunTime: null
 };
 
 function $(selector) {
@@ -31,12 +28,37 @@ function $all(selector) {
   return Array.prototype.slice.call(document.querySelectorAll(selector));
 }
 
+function applyI18n() {
+  document.documentElement.lang = currentLocale;
+  $all("[data-i18n]").forEach(function (el) {
+    el.textContent = t(el.dataset.i18n);
+  });
+  $all("[data-i18n-placeholder]").forEach(function (el) {
+    el.placeholder = t(el.dataset.i18nPlaceholder);
+  });
+  $all("[data-i18n-aria-label]").forEach(function (el) {
+    el.setAttribute("aria-label", t(el.dataset.i18nAriaLabel));
+  });
+  $all("[data-i18n-title]").forEach(function (el) {
+    el.title = t(el.dataset.i18nTitle);
+  });
+}
+
+function setLocale(locale) {
+  if (!I18N[locale]) {
+    return;
+  }
+  currentLocale = locale;
+  applyI18n();
+  refreshText();
+}
+
 function countText(value) {
   return String(value || "").length;
 }
 
 function formatCount(value) {
-  return countText(value) + " 字符";
+  return countText(value) + " " + t("charsUnit");
 }
 
 function updateCount(el, value) {
@@ -55,8 +77,13 @@ function showToast(message) {
   }, CONFIG.toastDurationMs);
 }
 
-function setStatus(status) {
-  $("#status-text").textContent = status;
+function setStatus(key) {
+  state.statusKey = key;
+  $("#status-text").textContent = t(key);
+}
+
+function renderLastRun() {
+  $("#last-run").textContent = t("lastRunPrefix") + (state.lastRunTime || "--");
 }
 
 function setError(message) {
@@ -72,7 +99,7 @@ function renderText() {
   updateCount($("#input-count"), state.input);
   updateCount($("#output-count"), state.output);
   $("#input-meter").style.width = Math.min(countText(state.input) / CONFIG.maxChars * CONFIG.meterMaxPercent, CONFIG.meterMaxPercent) + "%";
-  output.textContent = state.output || TEXTS.emptyOutput;
+  output.textContent = state.output || t("emptyOutput");
   output.classList.toggle("empty", !state.output);
   output.classList.remove("fade-in");
   window.requestAnimationFrame(function () {
@@ -87,20 +114,20 @@ function setMode(mode) {
   });
 }
 
-function setBusy(flag, nextStatus) {
+function setBusy(flag, nextStatusKey) {
   state.busy = Boolean(flag);
   $("#run-transform").disabled = state.busy;
   $("#run-transform").classList.toggle("busy", state.busy);
-  $("#run-label").textContent = state.busy ? TEXTS.processingButton : TEXTS.runButton;
-  setStatus(state.busy ? TEXTS.statusProcessing : nextStatus || TEXTS.statusDone);
+  $("#run-label").textContent = state.busy ? t("processingButton") : t("runButton");
+  setStatus(state.busy ? "statusProcessing" : nextStatusKey || "statusDone");
 }
 
 function runTransform() {
   state.input = $("#input-text").value;
   if (!state.input.trim()) {
-    setError(TEXTS.emptyWarning);
-    setStatus(TEXTS.statusWaiting);
-    showToast(TEXTS.emptyWarning);
+    setError(t("emptyWarning"));
+    setStatus("statusWaiting");
+    showToast(t("emptyWarning"));
     return;
   }
 
@@ -108,13 +135,14 @@ function runTransform() {
   setBusy(true);
   window.lacinka.transform(state.input, state.mode).then(function (output) {
     state.output = output;
-    setBusy(false, TEXTS.statusDone);
-    $("#last-run").textContent = TEXTS.lastRunPrefix + new Date().toLocaleTimeString();
+    setBusy(false, "statusDone");
+    state.lastRunTime = new Date().toLocaleTimeString();
+    renderLastRun();
     renderText();
   }).catch(function (error) {
-    setBusy(false, TEXTS.statusWaiting);
-    setError(error && error.message ? error.message : "转写失败");
-    showToast("转写失败");
+    setBusy(false, "statusWaiting");
+    setError(error && error.message ? error.message : t("transformFailed"));
+    showToast(t("transformFailed"));
   });
 }
 
@@ -122,9 +150,10 @@ function clearAll() {
   $("#input-text").value = "";
   state.input = "";
   state.output = "";
+  state.lastRunTime = null;
   setError("");
-  setStatus(TEXTS.statusWaiting);
-  $("#last-run").textContent = TEXTS.lastRunPrefix + "--";
+  setStatus("statusWaiting");
+  renderLastRun();
   renderText();
 }
 
@@ -138,20 +167,20 @@ function swapText() {
 
 function copyOutput() {
   if (!state.output) {
-    showToast("暂无输出可复制");
+    showToast(t("noOutputToCopy"));
     return;
   }
   navigator.clipboard.writeText(state.output).then(function () {
-    setStatus(TEXTS.statusCopied);
-    showToast(TEXTS.statusCopied);
+    setStatus("statusCopied");
+    showToast(t("statusCopied"));
   }).catch(function () {
-    showToast("复制失败");
+    showToast(t("copyFailed"));
   });
 }
 
 function downloadOutput(format) {
   if (!state.output) {
-    showToast("暂无输出可下载");
+    showToast(t("noOutputToDownload"));
     return;
   }
   var content = format === "json"
@@ -165,8 +194,8 @@ function downloadOutput(format) {
   link.download = "Lacinka_output." + format;
   link.click();
   URL.revokeObjectURL(url);
-  setStatus(TEXTS.statusDownloaded);
-  showToast(TEXTS.statusDownloaded);
+  setStatus("statusDownloaded");
+  showToast(t("statusDownloaded"));
 }
 
 function setDownloadMenu(open) {
@@ -180,7 +209,7 @@ function toggleDownloadMenu() {
 
 function setMaximizeIcon(maximized) {
   $("#btn-maximize").textContent = maximized ? "❐" : "□";
-  $("#btn-maximize").setAttribute("aria-label", maximized ? "还原" : "最大化");
+  $("#btn-maximize").setAttribute("aria-label", maximized ? t("restore") : t("maximize"));
 }
 
 function bindEvents() {
@@ -201,6 +230,9 @@ function bindEvents() {
     state.theme = state.theme === "light" ? "dark" : "light";
     $(".window").dataset.theme = state.theme;
     $("#theme-toggle").textContent = state.theme === "light" ? "◐" : "◑";
+  });
+  $("#lang-toggle").addEventListener("click", function () {
+    setLocale(currentLocale === "en" ? "zh-CN" : "en");
   });
   $("#input-text").addEventListener("input", renderText);
   $("#run-transform").addEventListener("click", runTransform);
@@ -239,10 +271,18 @@ function bindEvents() {
   });
 }
 
+function refreshText() {
+  setBusy(state.busy, state.statusKey);
+  renderLastRun();
+  renderText();
+}
+
 function bootstrap() {
+  applyI18n();
   bindEvents();
   setMode("0");
-  setStatus(TEXTS.statusWaiting);
+  setBusy(false, "statusWaiting");
+  renderLastRun();
   renderText();
 }
 

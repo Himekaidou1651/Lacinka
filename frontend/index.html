@@ -14,25 +14,26 @@
         <div class="brand-avatar"></div>
         <div class="brand-text">
           <div class="brand-title">Łacinka</div>
-          <div class="brand-subtitle">希腊/西里尔/谚文</div>
+          <div class="brand-subtitle" data-i18n="brandSubtitle"></div>
         </div>
       </div>
 
       <div class="header-status">
         <span class="status-dot"></span>
-        <span id="status-text">等待输入</span>
+        <span id="status-text" data-i18n="statusWaiting"></span>
       </div>
 
       <div class="title-actions">
-        <button id="theme-toggle" class="icon-button" type="button" aria-label="切换深浅色" title="切换深浅色">◐</button>
+        <button id="lang-toggle" class="lang-toggle" type="button" data-i18n-aria-label="langToggle" data-i18n-title="langToggle"><span data-i18n="langLabel"></span></button>
+        <button id="theme-toggle" class="icon-button" type="button" data-i18n-aria-label="themeToggle" data-i18n-title="themeToggle">◐</button>
         <label class="pin-toggle">
           <input id="always-on-top" type="checkbox">
-          <span>置顶</span>
+          <span data-i18n="alwaysOnTop"></span>
         </label>
-        <button id="clear-all" class="icon-button danger-hover" type="button" aria-label="清空" title="清空">⌫</button>
-        <button id="btn-minimize" class="icon-button" type="button" aria-label="最小化">_</button>
-        <button id="btn-maximize" class="icon-button" type="button" aria-label="最大化">□</button>
-        <button id="btn-close" class="icon-button danger" type="button" aria-label="关闭">×</button>
+        <button id="clear-all" class="icon-button danger-hover" type="button" data-i18n-aria-label="clearAll" data-i18n-title="clearAll">⌫</button>
+        <button id="btn-minimize" class="icon-button" type="button" data-i18n-aria-label="minimize">_</button>
+        <button id="btn-maximize" class="icon-button" type="button" data-i18n-aria-label="maximize">□</button>
+        <button id="btn-close" class="icon-button danger" type="button" data-i18n-aria-label="close">×</button>
       </div>
     </header>
 
@@ -40,73 +41,73 @@
       <section class="text-panel input-panel">
         <div class="panel-head">
           <div>
-            <span class="eyebrow">输入</span>
-            <h1>待转写内容</h1>
+            <span class="eyebrow" data-i18n="inputEyebrow"></span>
+            <h1 data-i18n="inputTitle"></h1>
           </div>
-          <span id="input-count" class="count">0 字符</span>
+          <span id="input-count" class="count" data-i18n="countZero"></span>
         </div>
-        <textarea id="input-text" spellcheck="false" placeholder="在此输入待转写内容..."></textarea>
+        <textarea id="input-text" spellcheck="false" data-i18n-placeholder="inputPlaceholder"></textarea>
         <div class="meter" aria-hidden="true"><span id="input-meter"></span></div>
         <div class="chips">
-          <button id="insert-sample" class="chip" type="button">插入示例</button>
+          <button id="insert-sample" class="chip" type="button" data-i18n="insertSample"></button>
         </div>
       </section>
 
       <section class="control-panel">
-        <div class="mode-stack" role="radiogroup" aria-label="转写类型">
+        <div class="mode-stack" role="radiogroup" data-i18n-aria-label="transformType">
           <button class="mode-card active" type="button" data-mode="0" data-accent="blue">
-            <span class="mode-name">希腊希腊->拉丁</span>
-            <span class="mode-desc">希腊字母转写</span>
+            <span class="mode-name" data-i18n="mode0Name"></span>
+            <span class="mode-desc" data-i18n="mode0Desc"></span>
           </button>
           <button class="mode-card" type="button" data-mode="1" data-accent="green">
-            <span class="mode-name">塞克西里尔->拉丁</span>
-            <span class="mode-desc">西里尔字母转写</span>
+            <span class="mode-name" data-i18n="mode1Name"></span>
+            <span class="mode-desc" data-i18n="mode1Desc"></span>
           </button>
           <button class="mode-card" type="button" data-mode="2" data-accent="rose">
-            <span class="mode-name">朝鲜谚文->拉丁</span>
-            <span class="mode-desc">谚文罗马音</span>
+            <span class="mode-name" data-i18n="mode2Name"></span>
+            <span class="mode-desc" data-i18n="mode2Desc"></span>
           </button>
           <button class="mode-card" type="button" data-mode="3" data-accent="amber">
-            <span class="mode-name">白罗斯西里尔->拉丁(Łacinka)</span>
-            <span class="mode-desc">西里尔字母转写</span>
+            <span class="mode-name" data-i18n="mode3Name"></span>
+            <span class="mode-desc" data-i18n="mode3Desc"></span>
           </button>
           <button class="mode-card" type="button" data-mode="4" data-accent="gray">
-            <span class="mode-name">白罗斯西里尔->拉丁(2007)</span>
-            <span class="mode-desc">西里尔字母转写</span>
+            <span class="mode-name" data-i18n="mode4Name"></span>
+            <span class="mode-desc" data-i18n="mode4Desc"></span>
           </button>
           <button class="mode-card" type="button" data-mode="5" data-accent="teal">
-            <span class="mode-name">乌克兰西里尔->拉丁(Łacinka)</span>
-            <span class="mode-desc">西里尔字母转写</span>
+            <span class="mode-name" data-i18n="mode5Name"></span>
+            <span class="mode-desc" data-i18n="mode5Desc"></span>
           </button>
           <button class="mode-card" type="button" data-mode="6" data-accent="violet">
-            <span class="mode-name">拉丁现代拉丁->教会拉丁</span>
-            <span class="mode-desc">教会拉丁字母转写</span>
+            <span class="mode-name" data-i18n="mode6Name"></span>
+            <span class="mode-desc" data-i18n="mode6Desc"></span>
           </button>
           <button class="mode-card" type="button" data-mode="7" data-accent="gold">
-            <span class="mode-name">俄罗斯西里尔->拉丁(Łacinka)</span>
-            <span class="mode-desc">西里尔字母转写</span>
+            <span class="mode-name" data-i18n="mode7Name"></span>
+            <span class="mode-desc" data-i18n="mode7Desc"></span>
           </button>
         </div>
 
         <button id="run-transform" class="primary-action" type="button">
           <span class="play-icon">▶</span>
           <span class="spinner" aria-hidden="true"></span>
-          <span id="run-label">转写</span>
+          <span id="run-label" data-i18n="runButton"></span>
         </button>
 
-        <button id="swap-text" class="swap-action" type="button" aria-label="交换输入输出">⇄</button>
+        <button id="swap-text" class="swap-action" type="button" data-i18n-aria-label="swapText">⇄</button>
       </section>
 
       <section class="text-panel output-panel">
         <div class="panel-head">
           <div>
-            <span class="eyebrow">输出</span>
-            <h1>转写结果</h1>
+            <span class="eyebrow" data-i18n="outputEyebrow"></span>
+            <h1 data-i18n="outputTitle"></h1>
           </div>
           <div class="output-tools">
-            <button id="copy-output" class="tool-button" type="button">复制</button>
+            <button id="copy-output" class="tool-button" type="button" data-i18n="copyOutput"></button>
             <div class="menu-wrap">
-              <button id="download-menu" class="tool-button" type="button" aria-expanded="false">下载 ▾</button>
+              <button id="download-menu" class="tool-button" type="button" aria-expanded="false" data-i18n="downloadMenu"></button>
               <div id="download-options" class="download-options" hidden>
                 <button type="button" data-download="txt">.txt</button>
                 <button type="button" data-download="json">.json</button>
@@ -114,9 +115,9 @@
             </div>
           </div>
         </div>
-        <div id="output-text" class="output-box empty">转写结果将在此显示</div>
+        <div id="output-text" class="output-box empty" data-i18n="emptyOutput"></div>
         <div class="panel-foot">
-          <span id="output-count" class="count">0 字符</span>
+          <span id="output-count" class="count" data-i18n="countZero"></span>
         </div>
       </section>
     </main>
@@ -124,13 +125,15 @@
     <div id="error-banner" class="error-banner" hidden></div>
 
     <footer class="statusbar">
-      <span id="last-run">上次运行: --</span>
+      <span id="last-run"></span>
     </footer>
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
   </div>
 
   <script src="../core/common/Common.js"></script>
+  <script src="./i18n/zh-CN.js"></script>
+  <script src="./i18n/en.js"></script>
   <script src="./renderer.js"></script>
 </body>
 </html>
