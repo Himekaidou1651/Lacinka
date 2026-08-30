@@ -177,10 +177,19 @@ function toggleDownloadMenu() {
   setDownloadMenu($("#download-options").hidden);
 }
 
+function setMaximizeIcon(maximized) {
+  $("#btn-maximize").textContent = maximized ? "❐" : "□";
+  $("#btn-maximize").setAttribute("aria-label", maximized ? "还原" : "最大化");
+}
+
 function bindEvents() {
   $("#btn-minimize").addEventListener("click", function () {
     window.lacinka.minimize();
   });
+  $("#btn-maximize").addEventListener("click", function () {
+    window.lacinka.maximize().then(setMaximizeIcon);
+  });
+  window.lacinka.onMaximizeChange(setMaximizeIcon);
   $("#btn-close").addEventListener("click", function () {
     window.lacinka.close();
   });

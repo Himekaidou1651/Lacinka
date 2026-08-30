@@ -22,6 +22,12 @@ function createWindow() {
   });
 
   mainWindow.loadFile(path.join(__dirname, "frontend", "index.html"));
+  mainWindow.on("maximize", () => {
+    mainWindow.webContents.send("window:maximize-change", true);
+  });
+  mainWindow.on("unmaximize", () => {
+    mainWindow.webContents.send("window:maximize-change", false);
+  });
   mainWindow.on("closed", () => {
     mainWindow = null;
   });
@@ -47,6 +53,18 @@ ipcMain.handle("window:minimize", () => {
   if (mainWindow) {
     mainWindow.minimize();
   }
+});
+
+ipcMain.handle("window:maximize", () => {
+  if (!mainWindow) {
+    return false;
+  }
+  if (mainWindow.isMaximized()) {
+    mainWindow.unmaximize();
+  } else {
+    mainWindow.maximize();
+  }
+  return mainWindow.isMaximized();
 });
 
 ipcMain.handle("window:close", () => {
