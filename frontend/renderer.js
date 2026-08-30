@@ -203,12 +203,9 @@ function bindEvents() {
       setMode(card.dataset.mode);
     });
   });
-  $all("[data-sample]").forEach(function (chip) {
-    chip.addEventListener("click", function () {
-      setMode(chip.dataset.sample);
-      $("#input-text").value = SAMPLES[chip.dataset.sample] || "";
-      renderText();
-    });
+  $("#insert-sample").addEventListener("click", function () {
+    $("#input-text").value = SAMPLES[state.mode] || "";
+    renderText();
   });
   $all("[data-download]").forEach(function (item) {
     item.addEventListener("click", function () {
