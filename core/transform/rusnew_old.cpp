@@ -17,14 +17,24 @@ rusnewOldLatin::rusnewOldLatin(std::string input)
 void rusnewOldLatin::transform() {
     std::string s = this->input;
 
+    const std::string B_SOFT = std::string("\x02", 1) + "B";
+    const std::string b_SOFT = std::string("\x02", 1) + "b";
+    const std::string W_SOFT = std::string("\x02", 1) + "W";
+    const std::string w_SOFT = std::string("\x02", 1) + "w";
+    const std::string P_SOFT = std::string("\x02", 1) + "P";
+    const std::string p_SOFT = std::string("\x02", 1) + "p";
+    const std::string F_SOFT = std::string("\x02", 1) + "F";
+    const std::string f_SOFT = std::string("\x02", 1) + "f";
+    const std::string SOFT_AFTER = std::string("\x03", 1);
+    const std::string HARD_AFTER = std::string("\x04", 1);
+
     // ============================================================
-    // 内部标记
-    //
-    // \x01 : 词首/边界哨兵
-    // \x02 : 软硬音符号及特殊软辅音的内部状态
-    //
-    // 正常俄语文本不会使用这些控制字符。
+    // 0) 重音与不转写符号
     // ============================================================
+
+    replaceAll(s, "\xD0\x98\xCC\x81", "\xC3\x8D"); // И́ -> Í
+    replaceAll(s, "\xD0\xB8\xCC\x81", "\xC3\xAD"); // и́ -> í
+    replaceAll(s, "\xE2\x80\x99", "");             // ’
 
 
     // ============================================================
@@ -32,57 +42,57 @@ void rusnewOldLatin::transform() {
     // ============================================================
 
     // Зь
-    replaceAll(s, "\xD0\x97\xD1\x8C", "\xC5\xB9"); // Ź
-    replaceAll(s, "\xD0\xB7\xD1\x8C", "\xC5\xBA"); // ź
+    replaceAll(s, "\xD0\x97\xD1\x8C", "\xC5\xB9" + SOFT_AFTER); // Ź
+    replaceAll(s, "\xD0\xB7\xD1\x8C", "\xC5\xBA" + SOFT_AFTER); // ź
 
     // Сь
-    replaceAll(s, "\xD0\xA1\xD1\x8C", "\xC5\x9A"); // Ś
-    replaceAll(s, "\xD1\x81\xD1\x8C", "\xC5\x9B"); // ś
+    replaceAll(s, "\xD0\xA1\xD1\x8C", "\xC5\x9A" + SOFT_AFTER); // Ś
+    replaceAll(s, "\xD1\x81\xD1\x8C", "\xC5\x9B" + SOFT_AFTER); // ś
 
     // Нь
-    replaceAll(s, "\xD0\x9D\xD1\x8C", "\xC5\x83"); // Ń
-    replaceAll(s, "\xD0\xBD\xD1\x8C", "\xC5\x84"); // ń
+    replaceAll(s, "\xD0\x9D\xD1\x8C", "\xC5\x83" + SOFT_AFTER); // Ń
+    replaceAll(s, "\xD0\xBD\xD1\x8C", "\xC5\x84" + SOFT_AFTER); // ń
 
     // Ль
-    replaceAll(s, "\xD0\x9B\xD1\x8C", "L");
-    replaceAll(s, "\xD0\xBB\xD1\x8C", "l");
+    replaceAll(s, "\xD0\x9B\xD1\x8C", "L" + SOFT_AFTER);
+    replaceAll(s, "\xD0\xBB\xD1\x8C", "l" + SOFT_AFTER);
 
     // Ць
-    replaceAll(s, "\xD0\xA6\xD1\x8C", "\xC4\x86"); // Ć
-    replaceAll(s, "\xD1\x86\xD1\x8C", "\xC4\x87"); // ć
+    replaceAll(s, "\xD0\xA6\xD1\x8C", "\xC4\x86" + SOFT_AFTER); // Ć
+    replaceAll(s, "\xD1\x86\xD1\x8C", "\xC4\x87" + SOFT_AFTER); // ć
 
     // Рь
-    replaceAll(s, "\xD0\xA0\xD1\x8C", "Rz");
-    replaceAll(s, "\xD1\x80\xD1\x8C", "rz");
+    replaceAll(s, "\xD0\xA0\xD1\x8C", "Rz" + SOFT_AFTER);
+    replaceAll(s, "\xD1\x80\xD1\x8C", "rz" + SOFT_AFTER);
 
     // Дь
-    replaceAll(s, "\xD0\x94\xD1\x8C", "D\xC5\xBA"); // Dź
-    replaceAll(s, "\xD0\xB4\xD1\x8C", "d\xC5\xBA"); // dź
+    replaceAll(s, "\xD0\x94\xD1\x8C", "D\xC5\xBA" + SOFT_AFTER); // Dź
+    replaceAll(s, "\xD0\xB4\xD1\x8C", "d\xC5\xBA" + SOFT_AFTER); // dź
 
     // Мь
-    replaceAll(s, "\xD0\x9C\xD1\x8C", "Mj");
-    replaceAll(s, "\xD0\xBC\xD1\x8C", "mj");
+    replaceAll(s, "\xD0\x9C\xD1\x8C", "Mj" + SOFT_AFTER);
+    replaceAll(s, "\xD0\xBC\xD1\x8C", "mj" + SOFT_AFTER);
 
     // Ть
-    replaceAll(s, "\xD0\xA2\xD1\x8C", "\xC5\xA4"); // Ť
-    replaceAll(s, "\xD1\x82\xD1\x8C", "\xC5\xA5"); // ť
+    replaceAll(s, "\xD0\xA2\xD1\x8C", "\xC5\xA4" + SOFT_AFTER); // Ť
+    replaceAll(s, "\xD1\x82\xD1\x8C", "\xC5\xA5" + SOFT_AFTER); // ť
 
 
     // ============================================================
     // 2) Бь / Вь / Пь / Фь
     // ============================================================
 
-    replaceAll(s, "\xD0\x91\xD1\x8C", "\x02B"); // Бь
-    replaceAll(s, "\xD0\xB1\xD1\x8C", "\x02b"); // бь
+    replaceAll(s, "\xD0\x91\xD1\x8C", B_SOFT + SOFT_AFTER); // Бь
+    replaceAll(s, "\xD0\xB1\xD1\x8C", b_SOFT + SOFT_AFTER); // бь
 
-    replaceAll(s, "\xD0\x92\xD1\x8C", "\x02W"); // Вь
-    replaceAll(s, "\xD0\xB2\xD1\x8C", "\x02w"); // вь
+    replaceAll(s, "\xD0\x92\xD1\x8C", W_SOFT + SOFT_AFTER); // Вь
+    replaceAll(s, "\xD0\xB2\xD1\x8C", w_SOFT + SOFT_AFTER); // вь
 
-    replaceAll(s, "\xD0\x9F\xD1\x8C", "\x02P"); // Пь
-    replaceAll(s, "\xD0\xBF\xD1\x8C", "\x02p"); // пь
+    replaceAll(s, "\xD0\x9F\xD1\x8C", P_SOFT + SOFT_AFTER); // Пь
+    replaceAll(s, "\xD0\xBF\xD1\x8C", p_SOFT + SOFT_AFTER); // пь
 
-    replaceAll(s, "\xD0\xA4\xD1\x8C", "\x02F"); // Фь
-    replaceAll(s, "\xD1\x84\xD1\x8C", "\x02f"); // фь
+    replaceAll(s, "\xD0\xA4\xD1\x8C", F_SOFT + SOFT_AFTER); // Фь
+    replaceAll(s, "\xD1\x84\xD1\x8C", f_SOFT + SOFT_AFTER); // фь
 
 
     // ============================================================
@@ -90,12 +100,12 @@ void rusnewOldLatin::transform() {
     // ============================================================
 
     // ь
-    replaceAll(s, "\xD1\x8C", "\x02s");
-    replaceAll(s, "\xD0\xAC", "\x02S");
+    replaceAll(s, "\xD1\x8C", SOFT_AFTER);
+    replaceAll(s, "\xD0\xAC", SOFT_AFTER);
 
     // ъ
-    replaceAll(s, "\xD1\x8A", "\x02h");
-    replaceAll(s, "\xD0\xAA", "\x02H");
+    replaceAll(s, "\xD1\x8A", HARD_AFTER);
+    replaceAll(s, "\xD0\xAA", HARD_AFTER);
 
 
     // ============================================================
@@ -107,29 +117,34 @@ void rusnewOldLatin::transform() {
     // ------------------------------------------------------------
 
     // ье -> je
-    replaceAll(s, "\x02s\xD0\xB5", "je");
+    replaceAll(s, SOFT_AFTER + "\xD0\xB5", "je");
 
     // ьё -> jo
-    replaceAll(s, "\x02s\xD1\x91", "jo");
+    replaceAll(s, SOFT_AFTER + "\xD1\x91", "jo");
 
     // ью -> ju
-    replaceAll(s, "\x02s\xD1\x8E", "ju");
+    replaceAll(s, SOFT_AFTER + "\xD1\x8E", "ju");
 
     // ья -> ja
-    replaceAll(s, "\x02s\xD1\x8F", "ja");
+    replaceAll(s, SOFT_AFTER + "\xD1\x8F", "ja");
 
+
+    // ъе́ / ъю́ / ъя́
+    replaceAll(s, HARD_AFTER + "\xD0\xB5\xCC\x81", "j\xC3\xA9");
+    replaceAll(s, HARD_AFTER + "\xD1\x8E\xCC\x81", "j\xC3\xBA");
+    replaceAll(s, HARD_AFTER + "\xD1\x8F\xCC\x81", "j\xC3\xA1");
 
     // ъе -> je
-    replaceAll(s, "\x02h\xD0\xB5", "je");
+    replaceAll(s, HARD_AFTER + "\xD0\xB5", "je");
 
     // ъё -> jo
-    replaceAll(s, "\x02h\xD1\x91", "jo");
+    replaceAll(s, HARD_AFTER + "\xD1\x91", "jo");
 
     // ъю -> ju
-    replaceAll(s, "\x02h\xD1\x8E", "ju");
+    replaceAll(s, HARD_AFTER + "\xD1\x8E", "ju");
 
     // ъя -> ja
-    replaceAll(s, "\x02h\xD1\x8F", "ja");
+    replaceAll(s, HARD_AFTER + "\xD1\x8F", "ja");
 
 
     // ------------------------------------------------------------
@@ -137,30 +152,28 @@ void rusnewOldLatin::transform() {
     // ------------------------------------------------------------
 
     // ЬЕ / ЪЕ
-    replaceAll(s, "\x02S\xD0\x95", "Je");
-    replaceAll(s, "\x02H\xD0\x95", "Je");
+    replaceAll(s, SOFT_AFTER + "\xD0\x95", "Je");
+    replaceAll(s, HARD_AFTER + "\xD0\x95", "Je");
 
     // ЬЁ / ЪЁ
-    replaceAll(s, "\x02S\xD0\x81", "Jo");
-    replaceAll(s, "\x02H\xD0\x81", "Jo");
+    replaceAll(s, SOFT_AFTER + "\xD0\x81", "Jo");
+    replaceAll(s, HARD_AFTER + "\xD0\x81", "Jo");
 
     // ЬЮ / ЪЮ
-    replaceAll(s, "\x02S\xD0\xAE", "Ju");
-    replaceAll(s, "\x02H\xD0\xAE", "Ju");
+    replaceAll(s, SOFT_AFTER + "\xD0\xAE", "Ju");
+    replaceAll(s, HARD_AFTER + "\xD0\xAE", "Ju");
 
     // ЬЯ / ЪЯ
-    replaceAll(s, "\x02S\xD0\xAF", "Ja");
-    replaceAll(s, "\x02H\xD0\xAF", "Ja");
+    replaceAll(s, SOFT_AFTER + "\xD0\xAF", "Ja");
+    replaceAll(s, HARD_AFTER + "\xD0\xAF", "Ja");
 
 
     // ============================================================
     // 5) 删除已经处理完的 ь / ъ
     // ============================================================
 
-    replaceAll(s, "\x02s", "");
-    replaceAll(s, "\x02S", "");
-    replaceAll(s, "\x02h", "");
-    replaceAll(s, "\x02H", "");
+    replaceAll(s, SOFT_AFTER, "");
+    replaceAll(s, HARD_AFTER, "");
 
 
     // ============================================================
@@ -268,16 +281,25 @@ void rusnewOldLatin::transform() {
     replaceAll(s, ")", ")\x01");
     replaceAll(s, "[", "[\x01");
     replaceAll(s, "]", "]\x01");
+    replaceAll(s, "{", "{\x01");
+    replaceAll(s, "}", "}\x01");
+    replaceAll(s, "\"", "\"\x01");
+    replaceAll(s, "/", "/\x01");
+    replaceAll(s, "\\", "\\\x01");
+    replaceAll(s, "-", "-\x01");
 
     replaceAll(s, "\xC2\xAB", "\xC2\xAB\x01"); // «
     replaceAll(s, "\xC2\xBB", "\xC2\xBB\x01"); // »
+    replaceAll(s, "\xE2\x80\x9C", "\xE2\x80\x9C\x01"); // “
+    replaceAll(s, "\xE2\x80\x9D", "\xE2\x80\x9D\x01"); // ”
+    replaceAll(s, "\xE2\x80\x9E", "\xE2\x80\x9E\x01"); // „
     replaceAll(s, "\xE2\x80\x94", "\xE2\x80\x94\x01"); // —
     replaceAll(s, "\xE2\x80\x93", "\xE2\x80\x93\x01"); // –
     replaceAll(s, "\xE2\x80\xA6", "\xE2\x80\xA6\x01"); // …
 
 
     // ============================================================
-    // 10) 词首 / 元音后的 ie/io/iu/ia → je/jo/ju/ja
+    // 10) 词首 / 元音后的 ie/io/iu/ia -> je/jo/ju/ja
     // ============================================================
 
     std::string prev;
@@ -334,6 +356,36 @@ void rusnewOldLatin::transform() {
         replaceAll(s, "yiu", "yju");
         replaceAll(s, "yia", "yja");
 
+        replaceAll(s, "aIe", "aJe");
+        replaceAll(s, "aIo", "aJo");
+        replaceAll(s, "aIu", "aJu");
+        replaceAll(s, "aIa", "aJa");
+
+        replaceAll(s, "eIe", "eJe");
+        replaceAll(s, "eIo", "eJo");
+        replaceAll(s, "eIu", "eJu");
+        replaceAll(s, "eIa", "eJa");
+
+        replaceAll(s, "iIe", "iJe");
+        replaceAll(s, "iIo", "iJo");
+        replaceAll(s, "iIu", "iJu");
+        replaceAll(s, "iIa", "iJa");
+
+        replaceAll(s, "oIe", "oJe");
+        replaceAll(s, "oIo", "oJo");
+        replaceAll(s, "oIu", "oJu");
+        replaceAll(s, "oIa", "oJa");
+
+        replaceAll(s, "uIe", "uJe");
+        replaceAll(s, "uIo", "uJo");
+        replaceAll(s, "uIu", "uJu");
+        replaceAll(s, "uIa", "uJa");
+
+        replaceAll(s, "yIe", "yJe");
+        replaceAll(s, "yIo", "yJo");
+        replaceAll(s, "yIu", "yJu");
+        replaceAll(s, "yIa", "yJa");
+
 
         // --------------------------------------------------------
         // 大写元音后
@@ -369,6 +421,36 @@ void rusnewOldLatin::transform() {
         replaceAll(s, "Yiu", "Yju");
         replaceAll(s, "Yia", "Yja");
 
+        replaceAll(s, "AIe", "AJe");
+        replaceAll(s, "AIo", "AJo");
+        replaceAll(s, "AIu", "AJu");
+        replaceAll(s, "AIa", "AJa");
+
+        replaceAll(s, "EIe", "EJe");
+        replaceAll(s, "EIo", "EJo");
+        replaceAll(s, "EIu", "EJu");
+        replaceAll(s, "EIa", "EJa");
+
+        replaceAll(s, "IIe", "IJe");
+        replaceAll(s, "IIo", "IJo");
+        replaceAll(s, "IIu", "IJu");
+        replaceAll(s, "IIa", "IJa");
+
+        replaceAll(s, "OIe", "OJe");
+        replaceAll(s, "OIo", "OJo");
+        replaceAll(s, "OIu", "OJu");
+        replaceAll(s, "OIa", "OJa");
+
+        replaceAll(s, "UIe", "UJe");
+        replaceAll(s, "UIo", "UJo");
+        replaceAll(s, "UIu", "UJu");
+        replaceAll(s, "UIa", "UJa");
+
+        replaceAll(s, "YIe", "YJe");
+        replaceAll(s, "YIo", "YJo");
+        replaceAll(s, "YIu", "YJu");
+        replaceAll(s, "YIa", "YJa");
+
     } while (s != prev);
 
 
@@ -377,35 +459,35 @@ void rusnewOldLatin::transform() {
     // ============================================================
 
     // Бь
-    replaceAll(s, "\x01\x02B", "B");
-    replaceAll(s, "\x01\x02b", "b");
+    replaceAll(s, "\x01" + B_SOFT, "B");
+    replaceAll(s, "\x01" + b_SOFT, "b");
 
-    replaceAll(s, "\x02B", "Bj");
-    replaceAll(s, "\x02b", "bj");
+    replaceAll(s, B_SOFT, "Bj");
+    replaceAll(s, b_SOFT, "bj");
 
 
     // Вь
-    replaceAll(s, "\x01\x02W", "W");
-    replaceAll(s, "\x01\x02w", "w");
+    replaceAll(s, "\x01" + W_SOFT, "W");
+    replaceAll(s, "\x01" + w_SOFT, "w");
 
-    replaceAll(s, "\x02W", "Wj");
-    replaceAll(s, "\x02w", "wj");
+    replaceAll(s, W_SOFT, "Wj");
+    replaceAll(s, w_SOFT, "wj");
 
 
     // Пь
-    replaceAll(s, "\x01\x02P", "P");
-    replaceAll(s, "\x01\x02p", "p");
+    replaceAll(s, "\x01" + P_SOFT, "P");
+    replaceAll(s, "\x01" + p_SOFT, "p");
 
-    replaceAll(s, "\x02P", "Pj");
-    replaceAll(s, "\x02p", "pj");
+    replaceAll(s, P_SOFT, "Pj");
+    replaceAll(s, p_SOFT, "pj");
 
 
     // Фь
-    replaceAll(s, "\x01\x02F", "F");
-    replaceAll(s, "\x01\x02f", "f");
+    replaceAll(s, "\x01" + F_SOFT, "F");
+    replaceAll(s, "\x01" + f_SOFT, "f");
 
-    replaceAll(s, "\x02F", "Fj");
-    replaceAll(s, "\x02f", "fj");
+    replaceAll(s, F_SOFT, "Fj");
+    replaceAll(s, f_SOFT, "fj");
 
 
     // ============================================================

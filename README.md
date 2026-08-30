@@ -20,8 +20,9 @@ It takes text from the app UI or stdin and converts it into Latin-script variant
 | 2 | Eonmon | Lumaja |
 | 3 | Belarusian | Łacinka |
 | 4 | Belarusian | 2007 Latin |
-| 5 | Ukrainian | Latin |
+| 5 | Ukrainian | Łacinka |
 | 6 | Latina | Old Latin |
+| 7 | Russian | Łacinka |
 
 ## How It Works
 
