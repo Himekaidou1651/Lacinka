@@ -16,6 +16,7 @@
     "asar": true,
     "files": [
       "main.js",
+      "core/common/Common.js",
       "frontend/**/*",
       "package.json"
     ],

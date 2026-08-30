@@ -13,16 +13,7 @@ var TEXTS = {
   lastRunPrefix: "上次运行: "
 };
 
-var SAMPLES = {
-  "0": "Ελλας και γλωσσα.",
-  "1": "Србија и Југославија.",
-  "2": "안녕하세요",
-  "3": "Жлобін і Лукашэнка.",
-  "4": "Жлобін і Лукашэнка.",
-  "5": "Мрії не мають терміну придатності.",
-  "6": "Salve, mundi! Hic est exemplum textus Latine Ecclesiasticae.",
-  "7": "Привет, мир! Это пример текста на русском языке.",
-};
+var SAMPLES = window.LacinkaCommon.samples;
 
 var state = {
   mode: "0",
