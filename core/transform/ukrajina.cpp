@@ -28,8 +28,8 @@ void ukrajinaLatin::transform() {
     replaceAll(s, "\xD0\xBD\xD1\x8C", "\xC5\x84");   // нь → ń
     replaceAll(s, "\xD0\x9B\xD1\x8C", "L");          // Ль → L
     replaceAll(s, "\xD0\xBB\xD1\x8C", "l");          // ль → l
-    replaceAll(s, "\xD0\x9C\xD1\x8C", "\xCC\x81");  // Мь → Ḿ
-    replaceAll(s, "\xD0\xBC\xD1\x8C", "\xCC\x81");  // мь → ḿ
+    replaceAll(s, "\xD0\x9C\xD1\x8C", "Mj");         // Мь → Mj
+    replaceAll(s, "\xD0\xBC\xD1\x8C", "mj");         // мь → mj
     replaceAll(s, "\xD0\xA2\xD1\x8C", "\xC5\xA4");   // Ть → Ť
     replaceAll(s, "\xD1\x82\xD1\x8C", "\xC5\xA5");   // ть → ť
     replaceAll(s, "\xD0\xA6\xD1\x8C", "\xC4\x86");   // Ць → Ć

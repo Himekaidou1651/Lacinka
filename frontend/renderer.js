@@ -20,7 +20,8 @@ var SAMPLES = {
   "3": "Жлобін і Лукашэнка.",
   "4": "Жлобін і Лукашэнка.",
   "5": "Мрії не мають терміну придатності.",
-  "6": "Salve, mundi! Hic est exemplum textus Latine Ecclesiasticae."
+  "6": "Salve, mundi! Hic est exemplum textus Latine Ecclesiasticae.",
+  "7": "Привет, мир! Это пример текста на русском языке.",
 };
 
 var state = {
