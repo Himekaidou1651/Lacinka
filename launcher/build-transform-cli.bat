@@ -21,11 +21,19 @@ pushd "%ROOT_DIR%"
   -o transform_cli.exe
 if errorlevel 1 goto :fail
 
-echo Build complete: transform_cli.exe
+echo ************************************************************
+echo *                                                          *
+echo *           Build complete: transform_cli.exe              *
+echo *                                                          *
+echo ************************************************************
 popd
 exit /b 0
 
 :fail
 popd
-echo Build failed.
+echo ************************************************************
+echo *                                                          *
+echo *                Build failed!                             *
+echo *                                                          *
+echo ************************************************************
 exit /b 1

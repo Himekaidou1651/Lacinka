@@ -30,6 +30,7 @@ It converts text into Latin-script variants for several languages, either throug
 | 5 | Ukrainian | Łacinka |
 | 6 | Latina | Ecclesiasticum |
 | 7 | Russian | Łacinka |
+| 8 | Russian | Old Łacinka |
 
 ## How It Works
 

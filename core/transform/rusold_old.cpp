@@ -224,6 +224,10 @@ void rusoldOldLatin::transform() {
     replaceAll(s, "\xD1\x89", "szcz");   // щ
     replaceAll(s, "\xD1\x8B", "y");      // ы
     replaceAll(s, "\xD1\x8D", "e");      // э
+    replaceAll(s, "\xD1\xA3", "\xC4\x97"); // ѣ -> ė
+    replaceAll(s, "\xD1\x96", "\xC3\xAF"); // і -> ï
+    replaceAll(s, "\xD1\xB3", "th");      // ѳ -> th
+    replaceAll(s, "\xD1\xB5", "\xC3\xBC"); // ѵ -> ü
 
 
     // ============================================================
@@ -257,6 +261,10 @@ void rusoldOldLatin::transform() {
     replaceAll(s, "\xD0\xA9", "Szcz");   // Щ
     replaceAll(s, "\xD0\xAB", "Y");      // Ы
     replaceAll(s, "\xD0\xAD", "E");      // Э
+    replaceAll(s, "\xD1\xA2", "\xC4\x96"); // Ѣ -> Ė
+    replaceAll(s, "\xD0\x86", "\xC3\x8F"); // І -> Ï
+    replaceAll(s, "\xD1\xB2", "Th");      // Ѳ -> Th
+    replaceAll(s, "\xD1\xB4", "\xC3\x9C"); // Ѵ -> Ü
 
 
     // ============================================================
@@ -356,6 +364,21 @@ void rusoldOldLatin::transform() {
         replaceAll(s, "yiu", "yju");
         replaceAll(s, "yia", "yja");
 
+        replaceAll(s, "\xC4\x97ie", "\xC4\x97je"); // ėie -> ėje
+        replaceAll(s, "\xC4\x97io", "\xC4\x97jo"); // ėio -> ėjo
+        replaceAll(s, "\xC4\x97iu", "\xC4\x97ju"); // ėiu -> ėju
+        replaceAll(s, "\xC4\x97ia", "\xC4\x97ja"); // ėia -> ėja
+
+        replaceAll(s, "\xC3\xAFie", "\xC3\xAFje"); // ïie -> ïje
+        replaceAll(s, "\xC3\xAFio", "\xC3\xAFjo"); // ïio -> ïjo
+        replaceAll(s, "\xC3\xAFiu", "\xC3\xAFju"); // ïiu -> ïju
+        replaceAll(s, "\xC3\xAFia", "\xC3\xAFja"); // ïia -> ïja
+
+        replaceAll(s, "\xC3\xBCie", "\xC3\xBCje"); // üie -> üje
+        replaceAll(s, "\xC3\xBCio", "\xC3\xBCjo"); // üio -> üjo
+        replaceAll(s, "\xC3\xBCiu", "\xC3\xBCju"); // üiu -> üju
+        replaceAll(s, "\xC3\xBCia", "\xC3\xBCja"); // üia -> üja
+
         replaceAll(s, "aIe", "aJe");
         replaceAll(s, "aIo", "aJo");
         replaceAll(s, "aIu", "aJu");
@@ -385,6 +408,21 @@ void rusoldOldLatin::transform() {
         replaceAll(s, "yIo", "yJo");
         replaceAll(s, "yIu", "yJu");
         replaceAll(s, "yIa", "yJa");
+
+        replaceAll(s, "\xC4\x97Ie", "\xC4\x97Je"); // ėIe -> ėJe
+        replaceAll(s, "\xC4\x97Io", "\xC4\x97Jo"); // ėIo -> ėJo
+        replaceAll(s, "\xC4\x97Iu", "\xC4\x97Ju"); // ėIu -> ėJu
+        replaceAll(s, "\xC4\x97Ia", "\xC4\x97Ja"); // ėIa -> ėJa
+
+        replaceAll(s, "\xC3\xAFIe", "\xC3\xAFJe"); // ïIe -> ïJe
+        replaceAll(s, "\xC3\xAFIo", "\xC3\xAFJo"); // ïIo -> ïJo
+        replaceAll(s, "\xC3\xAFIu", "\xC3\xAFJu"); // ïIu -> ïJu
+        replaceAll(s, "\xC3\xAFIa", "\xC3\xAFJa"); // ïIa -> ïJa
+
+        replaceAll(s, "\xC3\xBCIe", "\xC3\xBCJe"); // üIe -> üJe
+        replaceAll(s, "\xC3\xBCIo", "\xC3\xBCJo"); // üIo -> üJo
+        replaceAll(s, "\xC3\xBCIu", "\xC3\xBCJu"); // üIu -> üJu
+        replaceAll(s, "\xC3\xBCIa", "\xC3\xBCJa"); // üIa -> üJa
 
 
         // --------------------------------------------------------
@@ -421,6 +459,21 @@ void rusoldOldLatin::transform() {
         replaceAll(s, "Yiu", "Yju");
         replaceAll(s, "Yia", "Yja");
 
+        replaceAll(s, "\xC4\x96ie", "\xC4\x96je"); // Ėie -> Ėje
+        replaceAll(s, "\xC4\x96io", "\xC4\x96jo"); // Ėio -> Ėjo
+        replaceAll(s, "\xC4\x96iu", "\xC4\x96ju"); // Ėiu -> Ėju
+        replaceAll(s, "\xC4\x96ia", "\xC4\x96ja"); // Ėia -> Ėja
+
+        replaceAll(s, "\xC3\x8Fie", "\xC3\x8Fje"); // Ïie -> Ïje
+        replaceAll(s, "\xC3\x8Fio", "\xC3\x8Fjo"); // Ïio -> Ïjo
+        replaceAll(s, "\xC3\x8Fiu", "\xC3\x8Fju"); // Ïiu -> Ïju
+        replaceAll(s, "\xC3\x8Fia", "\xC3\x8Fja"); // Ïia -> Ïja
+
+        replaceAll(s, "\xC3\x9Cie", "\xC3\x9Cje"); // Üie -> Üje
+        replaceAll(s, "\xC3\x9Cio", "\xC3\x9Cjo"); // Üio -> Üjo
+        replaceAll(s, "\xC3\x9Ciu", "\xC3\x9Cju"); // Üiu -> Üju
+        replaceAll(s, "\xC3\x9Cia", "\xC3\x9Cja"); // Üia -> Üja
+
         replaceAll(s, "AIe", "AJe");
         replaceAll(s, "AIo", "AJo");
         replaceAll(s, "AIu", "AJu");
@@ -450,6 +503,21 @@ void rusoldOldLatin::transform() {
         replaceAll(s, "YIo", "YJo");
         replaceAll(s, "YIu", "YJu");
         replaceAll(s, "YIa", "YJa");
+
+        replaceAll(s, "\xC4\x96Ie", "\xC4\x96Je"); // ĖIe -> ĖJe
+        replaceAll(s, "\xC4\x96Io", "\xC4\x96Jo"); // ĖIo -> ĖJo
+        replaceAll(s, "\xC4\x96Iu", "\xC4\x96Ju"); // ĖIu -> ĖJu
+        replaceAll(s, "\xC4\x96Ia", "\xC4\x96Ja"); // ĖIa -> ĖJa
+
+        replaceAll(s, "\xC3\x8FIe", "\xC3\x8FJe"); // ÏIe -> ÏJe
+        replaceAll(s, "\xC3\x8FIo", "\xC3\x8FJo"); // ÏIo -> ÏJo
+        replaceAll(s, "\xC3\x8FIu", "\xC3\x8FJu"); // ÏIu -> ÏJu
+        replaceAll(s, "\xC3\x8FIa", "\xC3\x8FJa"); // ÏIa -> ÏJa
+
+        replaceAll(s, "\xC3\x9CIe", "\xC3\x9CJe"); // ÜIe -> ÜJe
+        replaceAll(s, "\xC3\x9CIo", "\xC3\x9CJo"); // ÜIo -> ÜJo
+        replaceAll(s, "\xC3\x9CIu", "\xC3\x9CJu"); // ÜIu -> ÜJu
+        replaceAll(s, "\xC3\x9CIa", "\xC3\x9CJa"); // ÜIa -> ÜJa
 
     } while (s != prev);
 
@@ -491,7 +559,7 @@ void rusoldOldLatin::transform() {
 
 
     // ============================================================
-    // 12) 删除词首哨兵
+    // 12) 删除哨兵
     // ============================================================
 
     replaceAll(s, "\x01", "");

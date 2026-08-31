@@ -20,11 +20,19 @@ if exist "dist\Lacinka.exe" (
   goto :fail
 )
 
-echo Build complete: %ROOT_DIR%\Lacinka.exe
+echo ************************************************************
+echo *                                                          *
+echo *           Build complete: %ROOT_DIR%\Lacinka.exe         *
+echo *                                                          *
+echo ************************************************************
 popd
 exit /b 0
 
 :fail
 popd
-echo Build failed.
+echo ************************************************************
+echo *                                                          *
+echo *                Build failed!                             *
+echo *                                                          *
+echo ************************************************************
 exit /b 1
