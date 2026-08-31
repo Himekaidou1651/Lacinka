@@ -18,6 +18,7 @@ pushd "%ROOT_DIR%"
   core/transform/latin_old.cpp ^
   core/transform/rusnew_old.cpp ^
   core/transform/rusold_old.cpp ^
+  core/transform/forsitojik.cpp ^
   -o transform_cli.exe
 if errorlevel 1 goto :fail
 

@@ -7,7 +7,7 @@ It converts text into Latin-script variants for several languages, either throug
 
 ## Features
 
-- 9 transliteration modes
+- 10 transliteration modes
 - Frameless Electron window with a custom title bar (minimize / maximize / close)
 - Input panel with live character count and a length meter
 - Mode-aware "Insert sample" button — each mode inserts a different sample text
@@ -31,6 +31,7 @@ It converts text into Latin-script variants for several languages, either throug
 | 6 | Latina | Ecclesiasticum |
 | 7 | Russian | Łacinka |
 | 8 | Russian | Old Łacinka |
+| 9 | Persian Tajiki | Latin |
 
 ## How It Works
 
@@ -57,6 +58,6 @@ Start `Lacinka.exe`.
 
 ## Notes
 
-- The character counter turns to a warning past 1000 characters and marks the count as over-limit past 5000
+- The character counter turns to a warning past 1000 characters and marks the count as over-limit past 12000
 - The sample button inserts mode-specific sample text
 - Export formats: plain text `.txt` and `.json` (the JSON file includes mode, input and output)

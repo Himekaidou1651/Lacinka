@@ -50,6 +50,8 @@
     mode7Desc: "西里尔字母转写",
     mode8Name: "俄罗斯旧西里尔->拉丁(Łacinka)",
     mode8Desc: "西里尔字母转写",
+    mode9Name: "塔吉克西里尔->拉丁",
+    mode9Desc: "西里尔字母转写",
     swapText: "交换输入输出",
     outputEyebrow: "输出",
     outputTitle: "转写结果",
