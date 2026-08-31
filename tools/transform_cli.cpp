@@ -10,6 +10,7 @@
 #include "../core/transform/ukrajina.h"
 #include "../core/transform/latin_old.h"
 #include "../core/transform/rusnew_old.h"
+#include "../core/transform/rusold_old.h"
 
 static int parseMode(const char* value) {
     if (!value) {
@@ -62,7 +63,13 @@ static std::string transformText(const std::string& input, int mode) {
         rusnewOldLatin t(input);
         t.transform();
         return t.getOutput();
-    } else {
+    }
+    else if (mode == 8) {
+        rusoldOldLatin t(input);
+        t.transform();
+        return t.getOutput();
+    }
+    else {
         return input;
     }
 }

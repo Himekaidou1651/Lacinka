@@ -16,4 +16,5 @@ g++ -std=c++17 \
   core/transform/ukrajina.cpp \
   core/transform/latin_old.cpp \
   core/transform/rusnew_old.cpp \
+  core/transform/rusold_old.cpp \
   -o transform_cli

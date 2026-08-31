@@ -18,4 +18,5 @@ enum class transformType{
     ukrajinaLatin,
     latinOldLatin,
     rusnewOldLatin,
+    rusoldOldLatin,
 };

@@ -48,6 +48,8 @@
     mode6Desc: "Latin",
     mode7Name: "Russ Cyrillic → Łacinka",
     mode7Desc: "Kirillica",
+    mode8Name: "Russ Old Cyrillic → Łacinka",
+    mode8Desc: "Kirillica",
     swapText: "Swap input and output",
     outputEyebrow: "Output",
     outputTitle: "The Result",
