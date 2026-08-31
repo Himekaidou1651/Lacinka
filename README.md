@@ -7,7 +7,7 @@ It converts text into Latin-script variants for several languages, either throug
 
 ## Features
 
-- 8 transliteration modes (Greek, Serbo-Croatian, Choseoneo, Belarusian, Ukrainian, Latin, Russian)
+- 9 transliteration modes
 - Frameless Electron window with a custom title bar (minimize / maximize / close)
 - Input panel with live character count and a length meter
 - Mode-aware "Insert sample" button — each mode inserts a different sample text
