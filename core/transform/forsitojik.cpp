@@ -17,108 +17,7 @@ forsiTojikLatin::forsiTojikLatin(std::string input)
 void forsiTojikLatin::transform() {
     std::string s = this->input;
 
-    // 1) 辅音 + ь 组合（先于所有单字母）
-    replaceAll(s, "\xD0\x97\xD1\x8C", "\xC5\xB9");   // Зь → Ź
-    replaceAll(s, "\xD0\xB7\xD1\x8C", "\xC5\xBA");   // зь → ź
-    replaceAll(s, "\xD0\x94\xD1\x8C", "D\xC5\xBA");  // Дь → Dź
-    replaceAll(s, "\xD0\xB4\xD1\x8C", "d\xC5\xBA");  // дь → dź
-    replaceAll(s, "\xD0\xA1\xD1\x8C", "\xC5\x9A");   // Сь → Ś
-    replaceAll(s, "\xD1\x81\xD1\x8C", "\xC5\x9B");   // сь → ś
-    replaceAll(s, "\xD0\x9D\xD1\x8C", "\xC5\x83");   // Нь → Ń
-    replaceAll(s, "\xD0\xBD\xD1\x8C", "\xC5\x84");   // нь → ń
-    replaceAll(s, "\xD0\x9B\xD1\x8C", "L");          // Ль → L
-    replaceAll(s, "\xD0\xBB\xD1\x8C", "l");          // ль → l
-    replaceAll(s, "\xD0\x9C\xD1\x8C", "Mj");         // Мь → Mj
-    replaceAll(s, "\xD0\xBC\xD1\x8C", "mj");         // мь → mj
-    replaceAll(s, "\xD0\xA2\xD1\x8C", "\xC5\xA4");   // Ть → Ť
-    replaceAll(s, "\xD1\x82\xD1\x8C", "\xC5\xA5");   // ть → ť
-    replaceAll(s, "\xD0\xA6\xD1\x8C", "\xC4\x86");   // Ць → Ć
-    replaceAll(s, "\xD1\x86\xD1\x8C", "\xC4\x87");   // ць → ć
-    replaceAll(s, "\xD0\xA0\xD1\x8C", "Rz");         // Рь → Rz
-    replaceAll(s, "\xD1\x80\xD1\x8C", "rz");         // рь → rz
-
-    // 2) 丢弃隔音符与剩余软/硬音符号
-    replaceAll(s, "'", "");
-    replaceAll(s, "\xE2\x80\x99", "");               // ’ (U+2019)
-    replaceAll(s, "\xCA\xBC", "");                   // ʼ (U+02BC)
-    replaceAll(s, "\xD1\x8C", "");                   // ь
-    replaceAll(s, "\xD0\xAC", "");                   // Ь
-    replaceAll(s, "\xD1\x8A", "");                   // ъ
-    replaceAll(s, "\xD0\xAA", "");                   // Ъ
-
-    // 3) 位置字母先转成 i-形（词首/元音后的 j-形在下面统一修正）
-    replaceAll(s, "\xD1\x94", "ie");   // є
-    replaceAll(s, "\xD1\x8E", "iu");   // ю
-    replaceAll(s, "\xD1\x8F", "ia");   // я
-    replaceAll(s, "\xD0\x84", "Ie");   // Є
-    replaceAll(s, "\xD0\xAE", "Iu");   // Ю
-    replaceAll(s, "\xD0\xAF", "Ia");   // Я
-
-    // 4) 其余单字母（小写）
-    replaceAll(s, "\xD0\xB0", "a");     // а
-    replaceAll(s, "\xD0\xB1", "b");     // б
-    replaceAll(s, "\xD0\xB2", "w");     // в → w
-    replaceAll(s, "\xD0\xB3", "h");     // г
-    replaceAll(s, "\xD2\x91", "g");     // ґ
-    replaceAll(s, "\xD0\xB4", "d");     // д
-    replaceAll(s, "\xD0\xB5", "e");     // е
-    replaceAll(s, "\xD0\xB6", "\xC5\xBC"); // ж → ż
-    replaceAll(s, "\xD0\xB7", "z");     // з
-    replaceAll(s, "\xD1\x96", "i");     // і
-    replaceAll(s, "\xD1\x97", "ji");    // ї → ji
-    replaceAll(s, "\xD0\xB8", "y");     // и → y
-    replaceAll(s, "\xD0\xB9", "j");     // й
-    replaceAll(s, "\xD0\xBA", "k");     // к
-    replaceAll(s, "\xD0\xBB", "\xC5\x82"); // л → ł
-    replaceAll(s, "\xD0\xBC", "m");     // м
-    replaceAll(s, "\xD0\xBD", "n");     // н
-    replaceAll(s, "\xD0\xBE", "o");     // о
-    replaceAll(s, "\xD0\xBF", "p");     // п
-    replaceAll(s, "\xD1\x80", "r");     // р
-    replaceAll(s, "\xD1\x81", "s");     // с
-    replaceAll(s, "\xD1\x82", "t");     // т
-    replaceAll(s, "\xD1\x83", "u");     // у
-    replaceAll(s, "\xD1\x84", "f");     // ф
-    replaceAll(s, "\xD1\x85", "ch");    // х
-    replaceAll(s, "\xD1\x86", "c");     // ц
-    replaceAll(s, "\xD1\x87", "cz");    // Ч → cz
-    replaceAll(s, "\xD1\x88", "sz");    // Ш → sz
-    replaceAll(s, "\xD1\x89", "szcz");  // щ → szcz
-    replaceAll(s, "\xD1\x8B", "y");     // ы
-
-    // 5) 其余单字母（大写）
-    replaceAll(s, "\xD0\x90", "A");     // А
-    replaceAll(s, "\xD0\x91", "B");     // Б
-    replaceAll(s, "\xD0\x92", "W");     // В → W
-    replaceAll(s, "\xD0\x93", "H");     // Г
-    replaceAll(s, "\xD2\x90", "G");     // Ґ
-    replaceAll(s, "\xD0\x94", "D");     // Д
-    replaceAll(s, "\xD0\x95", "E");     // Е
-    replaceAll(s, "\xD0\x96", "\xC5\xBB"); // Ж → Ż
-    replaceAll(s, "\xD0\x97", "Z");     // З
-    replaceAll(s, "\xD0\x86", "I");     // І
-    replaceAll(s, "\xD0\x87", "Ji");    // Ї → Ji
-    replaceAll(s, "\xD0\x98", "Y");     // И → Y
-    replaceAll(s, "\xD0\x99", "J");     // Й
-    replaceAll(s, "\xD0\x9A", "K");     // К
-    replaceAll(s, "\xD0\x9B", "\xC5\x81"); // Л → Ł
-    replaceAll(s, "\xD0\x9C", "M");     // М
-    replaceAll(s, "\xD0\x9D", "N");     // Н
-    replaceAll(s, "\xD0\x9E", "O");     // О
-    replaceAll(s, "\xD0\x9F", "P");     // П
-    replaceAll(s, "\xD0\xA0", "R");     // Р
-    replaceAll(s, "\xD0\xA1", "S");     // С
-    replaceAll(s, "\xD0\xA2", "T");     // Т
-    replaceAll(s, "\xD0\xA3", "U");     // У
-    replaceAll(s, "\xD0\xA4", "F");     // Ф
-    replaceAll(s, "\xD0\xA5", "Ch");    // Х
-    replaceAll(s, "\xD0\xA6", "C");     // Ц
-    replaceAll(s, "\xD0\xA7", "Cz");    // Ч → Cz
-    replaceAll(s, "\xD0\xA8", "Sz");    // Ш → Sz
-    replaceAll(s, "\xD0\xA9", "Szcz");  // Щ → Szcz
-    replaceAll(s, "\xD0\xAB", "Y");     // Ы
-
-    // 6) 词首位置插入哨兵 \x01
+    // 1) 词首位置插入哨兵 \x01
     s = "\x01" + s;
     replaceAll(s, " ", " \x01");
     replaceAll(s, "\t", "\t\x01");
@@ -140,55 +39,91 @@ void forsiTojikLatin::transform() {
     replaceAll(s, "\xE2\x80\x93", "\xE2\x80\x93\x01"); // –
     replaceAll(s, "\xE2\x80\xA6", "\xE2\x80\xA6\x01"); // …
 
-    // 7) 反复修正词首/元音后的 i-形 → j-形（处理连续位置字母）
-    std::string prev;
-    do {
-        prev = s;
-        replaceAll(s, "\x01ie", "je");
-        replaceAll(s, "\x01iu", "ju");
-        replaceAll(s, "\x01ia", "ja");
-        replaceAll(s, "\x01Ie", "Je");
-        replaceAll(s, "\x01Iu", "Ju");
-        replaceAll(s, "\x01Ia", "Ja");
-        replaceAll(s, "aie", "aje");
-        replaceAll(s, "aiu", "aju");
-        replaceAll(s, "aia", "aja");
-        replaceAll(s, "eie", "eje");
-        replaceAll(s, "eiu", "eju");
-        replaceAll(s, "eia", "eja");
-        replaceAll(s, "iie", "ije");
-        replaceAll(s, "iiu", "iju");
-        replaceAll(s, "iia", "ija");
-        replaceAll(s, "oie", "oje");
-        replaceAll(s, "oiu", "oju");
-        replaceAll(s, "oia", "oja");
-        replaceAll(s, "uie", "uje");
-        replaceAll(s, "uiu", "uju");
-        replaceAll(s, "uia", "uja");
-        replaceAll(s, "yie", "yje");
-        replaceAll(s, "yiu", "yju");
-        replaceAll(s, "yia", "yja");
-        replaceAll(s, "Aie", "Aje");
-        replaceAll(s, "Aiu", "Aju");
-        replaceAll(s, "Aia", "Aja");
-        replaceAll(s, "Eie", "Eje");
-        replaceAll(s, "Eiu", "Eju");
-        replaceAll(s, "Eia", "Eja");
-        replaceAll(s, "Iie", "Ije");
-        replaceAll(s, "Iiu", "Iju");
-        replaceAll(s, "Iia", "Ija");
-        replaceAll(s, "Oie", "Oje");
-        replaceAll(s, "Oiu", "Oju");
-        replaceAll(s, "Oia", "Oja");
-        replaceAll(s, "Uie", "Uje");
-        replaceAll(s, "Uiu", "Uju");
-        replaceAll(s, "Uia", "Uja");
-        replaceAll(s, "Yie", "Yje");
-        replaceAll(s, "Yiu", "Yju");
-        replaceAll(s, "Yia", "Yja");
-    } while (s != prev);
+    // 2) 词首 ъ/Ъ 通常不转写（删除，保留哨兵）
+    replaceAll(s, "\x01\xD1\x8A", "\x01");   // ъ
+    replaceAll(s, "\x01\xD0\xAA", "\x01");   // Ъ
 
-    // 8) 去掉哨兵
+    // 3) 词首 е → ye、Е → Ye
+    replaceAll(s, "\x01\xD0\xB5", "ye");
+    replaceAll(s, "\x01\xD0\x95", "Ye");
+
+    // 4) 其余单字母（小写）
+    replaceAll(s, "\xD0\xB0", "a");     // а
+    replaceAll(s, "\xD0\xB1", "b");     // б
+    replaceAll(s, "\xD0\xB2", "v");     // в
+    replaceAll(s, "\xD0\xB3", "g");     // г
+    replaceAll(s, "\xD2\x93", "\xC4\xA1"); // ғ → ġ
+    replaceAll(s, "\xD0\xB4", "d");     // д
+    replaceAll(s, "\xD0\xB5", "e");     // е
+    replaceAll(s, "\xD1\x91", "yo");    // ё
+    replaceAll(s, "\xD0\xB6", "\xC5\xBE"); // ж → ž
+    replaceAll(s, "\xD0\xB7", "z");     // з
+    replaceAll(s, "\xD0\xB8", "i");     // и
+    replaceAll(s, "\xD3\xA3", "\xC4\xAB"); // ӣ → ī
+    replaceAll(s, "\xD0\xB9", "y");     // й
+    replaceAll(s, "\xD0\xBA", "k");     // к
+    replaceAll(s, "\xD2\x9B", "q");     // қ
+    replaceAll(s, "\xD0\xBB", "l");     // л
+    replaceAll(s, "\xD0\xBC", "m");     // м
+    replaceAll(s, "\xD0\xBD", "n");     // н
+    replaceAll(s, "\xD0\xBE", "o");     // о
+    replaceAll(s, "\xD0\xBF", "p");     // п
+    replaceAll(s, "\xD1\x80", "r");     // р
+    replaceAll(s, "\xD1\x81", "s");     // с
+    replaceAll(s, "\xD1\x82", "t");     // т
+    replaceAll(s, "\xD1\x83", "u");     // у
+    replaceAll(s, "\xD3\xAF", "\xC5\xAB"); // ӯ → ū
+    replaceAll(s, "\xD1\x84", "f");     // ф
+    replaceAll(s, "\xD1\x85", "x");     // х
+    replaceAll(s, "\xD2\xB3", "h");     // ҳ
+    replaceAll(s, "\xD1\x87", "\xC4\x8D"); // ч → č
+    replaceAll(s, "\xD2\xB7", "j");     // ҷ
+    replaceAll(s, "\xD1\x88", "\xC5\xA1"); // ш → š
+    replaceAll(s, "\xD1\x8D", "e");     // э
+    replaceAll(s, "\xD1\x8E", "yu");    // ю
+    replaceAll(s, "\xD1\x8F", "ya");    // я
+
+    // 5) 其余单字母（大写）
+    replaceAll(s, "\xD0\x90", "A");     // А
+    replaceAll(s, "\xD0\x91", "B");     // Б
+    replaceAll(s, "\xD0\x92", "V");     // В
+    replaceAll(s, "\xD0\x93", "G");     // Г
+    replaceAll(s, "\xD2\x92", "\xC4\xA0"); // Ғ → Ġ
+    replaceAll(s, "\xD0\x94", "D");     // Д
+    replaceAll(s, "\xD0\x95", "E");     // Е
+    replaceAll(s, "\xD0\x81", "Yo");    // Ё
+    replaceAll(s, "\xD0\x96", "\xC5\xBD"); // Ж → Ž
+    replaceAll(s, "\xD0\x97", "Z");     // З
+    replaceAll(s, "\xD0\x98", "I");     // И
+    replaceAll(s, "\xD3\xA2", "\xC4\xAA"); // Ӣ → Ī
+    replaceAll(s, "\xD0\x99", "Y");     // Й
+    replaceAll(s, "\xD0\x9A", "K");     // К
+    replaceAll(s, "\xD2\x9A", "Q");     // Қ
+    replaceAll(s, "\xD0\x9B", "L");     // Л
+    replaceAll(s, "\xD0\x9C", "M");     // М
+    replaceAll(s, "\xD0\x9D", "N");     // Н
+    replaceAll(s, "\xD0\x9E", "O");     // О
+    replaceAll(s, "\xD0\x9F", "P");     // П
+    replaceAll(s, "\xD0\xA0", "R");     // Р
+    replaceAll(s, "\xD0\xA1", "S");     // С
+    replaceAll(s, "\xD0\xA2", "T");     // Т
+    replaceAll(s, "\xD0\xA3", "U");     // У
+    replaceAll(s, "\xD3\xAE", "\xC5\xAA"); // Ӯ → Ū
+    replaceAll(s, "\xD0\xA4", "F");     // Ф
+    replaceAll(s, "\xD0\xA5", "X");     // Х
+    replaceAll(s, "\xD2\xB2", "H");     // Ҳ
+    replaceAll(s, "\xD0\xA7", "\xC4\x8C"); // Ч → Č
+    replaceAll(s, "\xD2\xB6", "J");     // Ҷ
+    replaceAll(s, "\xD0\xA8", "\xC5\xA0"); // Ш → Š
+    replaceAll(s, "\xD0\xAD", "E");     // Э
+    replaceAll(s, "\xD0\xAE", "Yu");    // Ю
+    replaceAll(s, "\xD0\xAF", "Ya");    // Я
+
+    // 6) 词内 ъ/Ъ → '（喉塞音）
+    replaceAll(s, "\xD1\x8A", "'");     // ъ
+    replaceAll(s, "\xD0\xAA", "'");     // Ъ
+
+    // 7) 去掉哨兵
     replaceAll(s, "\x01", "");
 
     this->output = s;
