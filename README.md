@@ -33,6 +33,7 @@ It converts text into Latin-script variants for several languages, either throug
 | 8 | Russian | Old Łacinka |
 | 9 | Persian Tajiki | Latin |
 | 10 | Armenian East | Latin |
+| 11 | Georgian | Latin |
 
 ## How It Works
 
