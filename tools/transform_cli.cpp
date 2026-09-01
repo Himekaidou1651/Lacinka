@@ -13,6 +13,7 @@
 #include "../core/transform/rusold_old.h"
 #include "../core/transform/forsitojik.h"
 #include "../core/transform/hayeren_big.h"
+#include "../core/transform/kartuli.h"
 
 static int parseMode(const char* value) {
     if (!value) {
@@ -78,6 +79,11 @@ static std::string transformText(const std::string& input, int mode) {
     }
     else if (mode == 10) {
         hayerenLatin t(input);
+        t.transform();
+        return t.getOutput();
+    }
+    else if (mode == 11) {
+        kartuliLatin t(input);
         t.transform();
         return t.getOutput();
     }

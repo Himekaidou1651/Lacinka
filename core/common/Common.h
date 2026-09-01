@@ -21,4 +21,5 @@ enum class transformType{
     rusoldOldLatin,
     forsiTojikLatin,
     hayerenLatin,
+    kartuliLatin,
 };
