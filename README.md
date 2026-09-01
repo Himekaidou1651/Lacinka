@@ -7,7 +7,7 @@ It converts text into Latin-script variants for several languages, either throug
 
 ## Features
 
-- 10 transliteration modes
+- 11 transliteration modes
 - Frameless Electron window with a custom title bar (minimize / maximize / close)
 - Input panel with live character count and a length meter
 - Mode-aware "Insert sample" button — each mode inserts a different sample text
@@ -32,6 +32,7 @@ It converts text into Latin-script variants for several languages, either throug
 | 7 | Russian | Łacinka |
 | 8 | Russian | Old Łacinka |
 | 9 | Persian Tajiki | Latin |
+| 10 | Armenian East | Latin |
 
 ## How It Works
 
