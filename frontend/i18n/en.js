@@ -52,6 +52,8 @@
     mode8Desc: "Kirillica",
     mode9Name: "Tojik Cyrillic → Latin",
     mode9Desc: "Kirillica",
+    mode10Name: "Arevelahayeren → Latin",
+    mode10Desc: "Hayoc",
     swapText: "Swap input and output",
     outputEyebrow: "Output",
     outputTitle: "The Result",

@@ -20,4 +20,5 @@ enum class transformType{
     rusnewOldLatin,
     rusoldOldLatin,
     forsiTojikLatin,
+    hayerenLatin,
 };
