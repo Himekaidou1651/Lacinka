@@ -7,8 +7,8 @@ It converts text into Latin-script variants for several languages, either throug
 
 ## Features
 
-- 11 transliteration modes
-- Frameless Electron window with a custom title bar (minimize / maximize / close)
+- 12 transliteration modes
+- Frameless window with a custom title bar (minimize / maximize / close)
 - Input panel with live character count and a length meter
 - Mode-aware "Insert sample" button — each mode inserts a different sample text
 - Swap input ↔ output, copy output to clipboard, download result as `.txt` or `.json`
