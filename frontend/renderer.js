@@ -7,7 +7,22 @@ function t(key) {
 }
 
 var SAMPLES = window.LacinkaCommon.samples;
+var GROUPS = window.LacinkaCommon.groups;
 var CONFIG = window.LacinkaCommon.config;
+var MODE_ACCENTS = {
+  "0": "blue",
+  "1": "green",
+  "2": "rose",
+  "3": "amber",
+  "4": "gray",
+  "5": "teal",
+  "6": "violet",
+  "7": "gold",
+  "8": "indigo",
+  "9": "cyan",
+  "10": "pink",
+  "11": "lime"
+};
 
 var state = {
   mode: "0",
@@ -107,11 +122,97 @@ function renderText() {
   });
 }
 
+function getGroupForMode(mode) {
+  var value = String(mode);
+  var found = "";
+  Object.keys(GROUPS).some(function (group) {
+    if (GROUPS[group].indexOf(value) !== -1) {
+      found = group;
+      return true;
+    }
+    return false;
+  });
+  return found;
+}
+
+function renderGroupButtons() {
+  var activeGroup = getGroupForMode(state.mode);
+  $all(".group-button").forEach(function (button) {
+    var group = button.dataset.group;
+    var selected = button.querySelector(".group-selected");
+    var groupModes = GROUPS[group] || [];
+    var groupMode = group === activeGroup ? state.mode : groupModes[0];
+    button.classList.toggle("active", group === activeGroup);
+    button.setAttribute("aria-pressed", String(group === activeGroup));
+    if (selected) {
+      selected.textContent = t("mode" + groupMode + "Name");
+    }
+  });
+}
+
+function createModeCard(mode) {
+  var card = document.createElement("button");
+  var name = document.createElement("span");
+  var desc = document.createElement("span");
+
+  card.className = "mode-card";
+  card.type = "button";
+  card.dataset.mode = mode;
+  card.dataset.accent = MODE_ACCENTS[mode] || "blue";
+  card.setAttribute("role", "radio");
+  card.setAttribute("aria-checked", String(mode === state.mode));
+  card.classList.toggle("active", mode === state.mode);
+
+  name.className = "mode-name";
+  name.dataset.i18n = "mode" + mode + "Name";
+  name.textContent = t(name.dataset.i18n);
+
+  desc.className = "mode-desc";
+  desc.dataset.i18n = "mode" + mode + "Desc";
+  desc.textContent = t(desc.dataset.i18n);
+
+  card.appendChild(name);
+  card.appendChild(desc);
+  card.addEventListener("click", function () {
+    setMode(mode);
+    closePopup();
+  });
+
+  return card;
+}
+
+function openGroup(group) {
+  var modes = GROUPS[String(group)] || [];
+  var overlay = $("#mode-popup");
+  var panel = overlay.querySelector(".popup-panel");
+  var list = $("#popup-mode-list");
+
+  panel.dataset.group = String(group);
+  list.textContent = "";
+  modes.forEach(function (mode) {
+    list.appendChild(createModeCard(mode));
+  });
+
+  overlay.hidden = false;
+  window.requestAnimationFrame(function () {
+    var active = list.querySelector(".mode-card.active") || list.querySelector(".mode-card");
+    if (active) {
+      active.focus();
+    }
+  });
+}
+
+function closePopup() {
+  $("#mode-popup").hidden = true;
+}
+
 function setMode(mode) {
   state.mode = String(mode);
   $all(".mode-card").forEach(function (card) {
     card.classList.toggle("active", card.dataset.mode === state.mode);
+    card.setAttribute("aria-checked", String(card.dataset.mode === state.mode));
   });
+  renderGroupButtons();
 }
 
 function setBusy(flag, nextStatusKey) {
@@ -240,10 +341,15 @@ function bindEvents() {
   $("#swap-text").addEventListener("click", swapText);
   $("#copy-output").addEventListener("click", copyOutput);
   $("#download-menu").addEventListener("click", toggleDownloadMenu);
-  $all("[data-mode]").forEach(function (card) {
-    card.addEventListener("click", function () {
-      setMode(card.dataset.mode);
+  $all("[data-group]").forEach(function (button) {
+    button.addEventListener("click", function () {
+      openGroup(button.dataset.group);
     });
+  });
+  $("#mode-popup").addEventListener("click", function (event) {
+    if (event.target === event.currentTarget) {
+      closePopup();
+    }
   });
   $("#insert-sample").addEventListener("click", function () {
     $("#input-text").value = SAMPLES[state.mode] || "";
@@ -267,12 +373,14 @@ function bindEvents() {
     }
     if (event.key === "Escape") {
       setDownloadMenu(false);
+      closePopup();
     }
   });
 }
 
 function refreshText() {
   setBusy(state.busy, state.statusKey);
+  renderGroupButtons();
   renderLastRun();
   renderText();
 }

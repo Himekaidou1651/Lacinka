@@ -54,54 +54,22 @@
       </section>
 
       <section class="control-panel">
-        <div class="mode-stack" role="radiogroup" data-i18n-aria-label="transformType">
-          <button class="mode-card active" type="button" data-mode="0" data-accent="blue">
-            <span class="mode-name" data-i18n="mode0Name"></span>
-            <span class="mode-desc" data-i18n="mode0Desc"></span>
+        <div class="mode-stack" data-i18n-aria-label="transformType">
+          <button class="group-button active" type="button" data-group="1">
+            <span class="group-name" data-i18n="group1Name"></span>
+            <span class="group-selected" data-selected-mode="1"></span>
           </button>
-          <button class="mode-card" type="button" data-mode="1" data-accent="green">
-            <span class="mode-name" data-i18n="mode1Name"></span>
-            <span class="mode-desc" data-i18n="mode1Desc"></span>
+          <button class="group-button" type="button" data-group="2">
+            <span class="group-name" data-i18n="group2Name"></span>
+            <span class="group-selected" data-selected-mode="2"></span>
           </button>
-          <button class="mode-card" type="button" data-mode="2" data-accent="rose">
-            <span class="mode-name" data-i18n="mode2Name"></span>
-            <span class="mode-desc" data-i18n="mode2Desc"></span>
+          <button class="group-button" type="button" data-group="3">
+            <span class="group-name" data-i18n="group3Name"></span>
+            <span class="group-selected" data-selected-mode="3"></span>
           </button>
-          <button class="mode-card" type="button" data-mode="3" data-accent="amber">
-            <span class="mode-name" data-i18n="mode3Name"></span>
-            <span class="mode-desc" data-i18n="mode3Desc"></span>
-          </button>
-          <button class="mode-card" type="button" data-mode="4" data-accent="gray">
-            <span class="mode-name" data-i18n="mode4Name"></span>
-            <span class="mode-desc" data-i18n="mode4Desc"></span>
-          </button>
-          <button class="mode-card" type="button" data-mode="5" data-accent="teal">
-            <span class="mode-name" data-i18n="mode5Name"></span>
-            <span class="mode-desc" data-i18n="mode5Desc"></span>
-          </button>
-          <button class="mode-card" type="button" data-mode="6" data-accent="violet">
-            <span class="mode-name" data-i18n="mode6Name"></span>
-            <span class="mode-desc" data-i18n="mode6Desc"></span>
-          </button>
-          <button class="mode-card" type="button" data-mode="7" data-accent="gold">
-            <span class="mode-name" data-i18n="mode7Name"></span>
-            <span class="mode-desc" data-i18n="mode7Desc"></span>
-          </button>
-          <button class="mode-card" type="button" data-mode="8" data-accent="indigo">
-            <span class="mode-name" data-i18n="mode8Name"></span>
-            <span class="mode-desc" data-i18n="mode8Desc"></span>
-          </button>
-          <button class="mode-card" type="button" data-mode="9" data-accent="cyan">
-            <span class="mode-name" data-i18n="mode9Name"></span>
-            <span class="mode-desc" data-i18n="mode9Desc"></span>
-          </button>
-          <button class="mode-card" type="button" data-mode="10" data-accent="pink">
-            <span class="mode-name" data-i18n="mode10Name"></span>
-            <span class="mode-desc" data-i18n="mode10Desc"></span>
-          </button>
-          <button class="mode-card" type="button" data-mode="11" data-accent="lime">
-            <span class="mode-name" data-i18n="mode11Name"></span>
-            <span class="mode-desc" data-i18n="mode11Desc"></span>
+          <button class="group-button" type="button" data-group="4">
+            <span class="group-name" data-i18n="group4Name"></span>
+            <span class="group-selected" data-selected-mode="4"></span>
           </button>
         </div>
 
@@ -139,6 +107,12 @@
     </main>
 
     <div id="error-banner" class="error-banner" hidden></div>
+
+    <div id="mode-popup" class="popup-overlay" hidden>
+      <div class="popup-panel" role="dialog" aria-modal="true" data-i18n-aria-label="transformType">
+        <div id="popup-mode-list" class="popup-mode-list" role="radiogroup" data-i18n-aria-label="transformType"></div>
+      </div>
+    </div>
 
     <footer class="statusbar">
       <span id="last-run"></span>
