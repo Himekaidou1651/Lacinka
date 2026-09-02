@@ -7,7 +7,7 @@ It converts text into Latin-script variants for several languages, either throug
 
 ## Features
 
-- 12 transliteration modes
+- 13 transliteration modes
 - Frameless window with a custom title bar (minimize / maximize / close)
 - Input panel with live character count and a length meter
 - Mode-aware "Insert sample" button — each mode inserts a different sample text
@@ -34,6 +34,7 @@ It converts text into Latin-script variants for several languages, either throug
 | 9 | Persian Tajiki | Latin |
 | 10 | Armenian East | Latin |
 | 11 | Georgian | Latin |
+| 12 | Bulgarian Makedonski | Latin |
 
 ## How It Works
 
