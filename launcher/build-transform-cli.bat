@@ -21,6 +21,7 @@ pushd "%ROOT_DIR%"
   core/transform/forsitojik.cpp ^
   core/transform/hayeren_big.cpp ^
   core/transform/kartuli.cpp ^
+  core/transform/bul_mak.cpp ^
   -o transform_cli.exe
 if errorlevel 1 goto :fail
 

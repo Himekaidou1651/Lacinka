@@ -60,6 +60,8 @@
     mode10Desc: "哈伊尔字母转写",
     mode11Name: "卡特韦罗->拉丁",
     mode11Desc: "卡特利字母转写",
+    mode12Name: "马其顿西里尔->拉丁",
+    mode12Desc: "西里尔字母转写",
     swapText: "交换输入输出",
     outputEyebrow: "输出",
     outputTitle: "转写结果",

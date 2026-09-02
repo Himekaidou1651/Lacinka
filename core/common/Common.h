@@ -22,6 +22,7 @@ enum class transformType{
     forsiTojikLatin,
     hayerenLatin,
     kartuliLatin,
+    bulmakLatin,
 };
 
 inline void replaceAll(std::string& s, const std::string& from, const std::string& to) {

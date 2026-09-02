@@ -60,6 +60,8 @@
     mode10Desc: "Hayoc",
     mode11Name: "Kartuli → Latin",
     mode11Desc: "Kartuli",
+    mode12Name: "Bulgarian Makedonski → Latin",
+    mode12Desc: "Kirillica",
     swapText: "Swap input and output",
     outputEyebrow: "Output",
     outputTitle: "The Result",
