@@ -55,7 +55,6 @@ Start `Lacinka.exe`.
   - `i18n/` - zh-CN and en language dictionaries
 - `core/common/Common.js` - shared sample texts and config (char limits, toast duration)
 - `core/transform/` - transliteration implementations (C++)
-- `tools/transform_cli.cpp` - native command-line entry
 - `launcher/` - build scripts
 - `assets/icons/` - app icons
 

@@ -55,7 +55,6 @@
   - `i18n/` - 中英文语言字典
 - `core/common/Common.js` - 共享示例文本与配置（字数限制、提示时长）
 - `core/transform/` - 各语言转写实现（C++）
-- `tools/transform_cli.cpp` - 原生命令行入口
 - `launcher/` - 构建脚本
 - `assets/icons/` - 应用图标
 

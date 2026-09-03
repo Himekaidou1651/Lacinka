@@ -22,7 +22,7 @@ var MODE_ACCENTS = {
   "9": "cyan",
   "10": "pink",
   "11": "lime",
-  "12": "teal",
+  "12": "brown",
 };
 
 var state = {
