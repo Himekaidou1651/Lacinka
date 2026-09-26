@@ -2,21 +2,18 @@
 
 [![汉语](https://img.shields.io/badge/文档-汉语-8B5CF6?style=flat-square)](./README-zhCN.md)
 
-Łacinka is a desktop transliteration tool built with Electron and a native C++ conversion core.
-It converts text into Latin-script variants for several languages, either through the GUI or from standard input via the command line.
+Łacinka is a desktop transliteration tool.
 
 ## Features
 
 - 13 transliteration modes
-- Frameless window with a custom title bar (minimize / maximize / close)
 - Input panel with live character count and a length meter
-- Mode-aware "Insert sample" button — each mode inserts a different sample text
+- "Insert sample" button: each mode inserts a different sample text
 - Swap input ↔ output, copy output to clipboard, download result as `.txt` or `.json`
 - Light/dark theme toggle and always-on-top toggle
-- Chinese/English interface switch (i18n)
+- Chinese/English interface switch
 - Status bar showing current status and last-run time; error banner and toast notifications
 - Keyboard shortcuts: `Ctrl+Enter` runs the conversion, `Esc` closes the download menu
-- Native CLI converter (`transform_cli`) reused by the desktop app
 
 ## Conversion Modes
 
@@ -38,7 +35,7 @@ It converts text into Latin-script variants for several languages, either throug
 
 ## How It Works
 
-The Electron front end sends text to `transform_cli`, a small C++ program that performs the transliteration.
+The Electron front end sends text to `transform_cli` the C++ program that performs the transliteration.
 The app is a UI shell around that native converter.
 
 ## Run
@@ -51,15 +48,15 @@ Start `Lacinka.exe`.
 - `electron-start.js` - local development launcher
 - `frontend/` - renderer UI
   - `index.html`, `style.css`, `renderer.js` - interface and behavior
-  - `preload.js` - context bridge (window controls + transform)
+  - `preload.js` - context bridge
   - `i18n/` - zh-CN and en language dictionaries
-- `core/common/Common.js` - shared sample texts and config (char limits, toast duration)
-- `core/transform/` - transliteration implementations (C++)
+- `core/common/Common.js` - shared sample texts and config
+- `core/transform/` - transliteration implementations
 - `launcher/` - build scripts
 - `assets/icons/` - app icons
 
 ## Notes
 
-- The character counter turns to a warning past 1000 characters and marks the count as over-limit past 12000
+- The character counter marks the count as over-limit past 12000
 - The sample button inserts mode-specific sample text
-- Export formats: plain text `.txt` and `.json` (the JSON file includes mode, input and output)
+- Export formats: plain text `.txt` and `.json`.
